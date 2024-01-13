@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.1.2] - 2024-01-13
+
+### Changed
+
+- 美化关于界面
+
+### Fixed
+
+- 修理了调色盘界面打开时内存泄漏卡死的问题，暂时改用文本输入
+
 ## [0.1.1] - 2024-01-13
 
 ### Added
@@ -38,3 +48,4 @@ and this project adheres to [Semantic Versioning].
 <!-- Versions -->
 [0.1.0]: https://github.com/cup113/full-clock/releases/v0.1.0
 [0.1.1]: https://github.com/cup113/full-clock/compare/v0.1.0..v0.1.1
+[0.1.2]: https://github.com/cup113/full-clock/compare/v0.1.1..v0.1.2
