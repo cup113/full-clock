@@ -23,7 +23,7 @@ const useStore = defineStore("index", () => {
     foreground: '#FFFFFF',
     fontFamily: 'numberonly, Arial, 等线, sans-serif',
     secondStyle: SecondStyle.FullscreenBar,
-    colorProgress: '#00660022',
+    colorProgress: '#00550080',
     titleStyle: TitleStyle.Date,
     titleCustomized: '',
   });
