@@ -8,7 +8,6 @@ import { VDivider } from 'vuetify/components/VDivider';
 import { VTextField } from 'vuetify/components/VTextField';
 import { VTabs, VTab } from 'vuetify/components/VTabs';
 import { VWindow, VWindowItem } from 'vuetify/components/VWindow';
-import { VChip } from 'vuetify/components/VChip';
 import { mdiClose } from '@mdi/js';
 
 import useStore, { SecondStyle, TitleStyle } from '../store/index';
@@ -65,10 +64,12 @@ const settingTab = ref("basic" as keyof typeof settingsItem);
         </v-text-field>
       </v-window-item>
       <v-window-item value="about">
-        <div><v-chip>网站图标来源：<a href="https://www.freepik.com/" target="_blank">freepik.com</a></v-chip></div>
-        <div><v-chip>此项目代码已开源：<a href="https://github.com/cup113/full-clock" target="_blank">Github Repo
-              (含使用说明与更新日志)</a></v-chip></div>
-        <div><v-chip>点击此处<a href="https://github.com/cup113/full-clock/issue" target="_blank">反馈</a></v-chip></div>
+        <div style="padding: 1rem;">
+          <div>网站图标来源：<a href="https://www.freepik.com/" target="_blank">freepik.com</a></div>
+          <div>此项目代码已开源：<a href="https://github.com/cup113/full-clock" target="_blank">Github Repo
+                (含使用说明与更新日志)</a></div>
+          <div>点击此处<a href="https://github.com/cup113/full-clock/issue" target="_blank">反馈</a></div>
+        </div>
       </v-window-item>
     </v-window>
   </v-card>
