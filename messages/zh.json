@@ -28,6 +28,7 @@
 	"timeSyncRemove": "移除校准",
 	"timeSyncComputing": "正在校准…",
 	"timeSyncDone": "校准完成",
+	"timeSyncNegligible": "本地误差小于300ms，无需校准",
 	"timeSyncFaster": "电脑比标准时间快{offset}ms（误差±{error}ms）",
 	"timeSyncSlower": "电脑比标准时间慢{offset}ms（误差±{error}ms）",
 	"language": "语言",

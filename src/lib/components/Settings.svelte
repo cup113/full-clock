@@ -14,7 +14,7 @@
 	let { open, onClose }: { open: boolean; onClose: () => void } = $props();
 
 	let draft = $state<Preferences>({ ...prefs });
-	let syncStatus = $state<'idle' | 'computing' | 'done' | 'applied'>('idle');
+	let syncStatus = $state<'idle' | 'computing' | 'done' | 'negligible' | 'applied'>('idle');
 	let syncResult = $state<SyncResult | null>(null);
 
 	const secondStyleLabels: Record<string, () => string> = {
@@ -42,7 +42,11 @@
 		try {
 			const result = await syncTime();
 			syncResult = result;
-			syncStatus = 'done';
+			if (Math.abs(result.offset) < 300) {
+				syncStatus = 'negligible';
+			} else {
+				syncStatus = 'done';
+			}
 		} catch {
 			syncStatus = 'idle';
 		}
@@ -115,7 +119,16 @@
 					<div class="flex flex-wrap gap-2">
 						{#each ['fullscreen-bar', 'top-bar', 'digital', 'off'] as val (val)}
 							<label class="flex cursor-pointer items-center gap-1.5 text-xs">
-								<input type="radio" name="secondStyle" value={val} bind:group={draft.secondStyle} />
+								<input
+									type="radio"
+									name="secondStyle"
+									value={val}
+									bind:group={draft.secondStyle}
+									class="peer sr-only"
+								/>
+								<span
+									class="h-4 w-4 rounded-full border border-gray-500 transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-500"
+								></span>
 								<span>{secondStyleLabels[val]()}</span>
 							</label>
 						{/each}
@@ -127,15 +140,42 @@
 					<h3 class="mb-2 text-sm font-medium opacity-80">{m.titleStyle()}</h3>
 					<div class="flex flex-wrap gap-2">
 						<label class="flex cursor-pointer items-center gap-1.5 text-xs">
-							<input type="radio" name="titleStyle" value="date" bind:group={draft.titleStyle} />
+							<input
+								type="radio"
+								name="titleStyle"
+								value="date"
+								bind:group={draft.titleStyle}
+								class="peer sr-only"
+							/>
+							<span
+								class="h-4 w-4 rounded-full border border-gray-500 transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-500"
+							></span>
 							<span>{m.titleStyle_date()}</span>
 						</label>
 						<label class="flex cursor-pointer items-center gap-1.5 text-xs">
-							<input type="radio" name="titleStyle" value="custom" bind:group={draft.titleStyle} />
+							<input
+								type="radio"
+								name="titleStyle"
+								value="custom"
+								bind:group={draft.titleStyle}
+								class="peer sr-only"
+							/>
+							<span
+								class="h-4 w-4 rounded-full border border-gray-500 transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-500"
+							></span>
 							<span>{m.titleStyle_custom()}</span>
 						</label>
 						<label class="flex cursor-pointer items-center gap-1.5 text-xs">
-							<input type="radio" name="titleStyle" value="off" bind:group={draft.titleStyle} />
+							<input
+								type="radio"
+								name="titleStyle"
+								value="off"
+								bind:group={draft.titleStyle}
+								class="peer sr-only"
+							/>
+							<span
+								class="h-4 w-4 rounded-full border border-gray-500 transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-500"
+							></span>
 							<span>{m.titleStyle_off()}</span>
 						</label>
 					</div>
@@ -189,7 +229,7 @@
 							min="0"
 							max="100"
 							bind:value={draft.progressOpacity}
-							class="flex-1 accent-blue-500"
+							class="flex-1 accent-blue-500 appearance-none cursor-pointer"
 						/>
 						<span class="w-8 text-right text-xs tabular-nums">{draft.progressOpacity}%</span>
 					</div>
@@ -212,6 +252,8 @@
 					<p class="mb-2 text-xs opacity-50">{m.timeSyncDesc()}</p>
 					{#if syncStatus === 'computing'}
 						<p class="mb-2 text-xs opacity-70">{m.timeSyncComputing()}</p>
+					{:else if syncStatus === 'negligible'}
+						<p class="mb-2 text-xs opacity-80">{m.timeSyncNegligible()}</p>
 					{:else if syncStatus === 'done' && syncResult}
 						<p class="mb-2 text-xs opacity-80">
 							{syncResult.offset > 0
@@ -256,7 +298,11 @@
 								value="zh"
 								checked={getLocale() === 'zh'}
 								onchange={() => handleLangChange('zh')}
+								class="peer sr-only"
 							/>
+							<span
+								class="h-4 w-4 rounded-full border border-gray-500 transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-500"
+							></span>
 							<span>中文</span>
 						</label>
 						<label class="flex cursor-pointer items-center gap-1.5 text-xs">
@@ -266,7 +312,11 @@
 								value="en"
 								checked={getLocale() === 'en'}
 								onchange={() => handleLangChange('en')}
+								class="peer sr-only"
 							/>
+							<span
+								class="h-4 w-4 rounded-full border border-gray-500 transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-500"
+							></span>
 							<span>English</span>
 						</label>
 					</div>
@@ -283,3 +333,27 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	input[type='range']::-webkit-slider-runnable-track {
+		height: 6px;
+		border-radius: 999px;
+		background: #4a4a6a;
+	}
+	input[type='range']::-moz-range-track {
+		height: 6px;
+		border-radius: 999px;
+		background: #4a4a6a;
+	}
+	input[type='range']::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 16px;
+		height: 16px;
+		border-radius: 999px;
+		background: #3b82f6;
+		border: 2px solid #1a1a2e;
+		margin-top: -5px;
+		cursor: pointer;
+	}
+</style>

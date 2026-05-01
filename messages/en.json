@@ -28,6 +28,7 @@
 	"timeSyncRemove": "Remove Calibration",
 	"timeSyncComputing": "Calibrating\u2026",
 	"timeSyncDone": "Calibration Complete",
+	"timeSyncNegligible": "Error within 300ms, no calibration needed",
 	"timeSyncFaster": "Local time is faster by {offset}ms (\u00b1{error}ms)",
 	"timeSyncSlower": "Local time is slower by {offset}ms (\u00b1{error}ms)",
 	"language": "Language",

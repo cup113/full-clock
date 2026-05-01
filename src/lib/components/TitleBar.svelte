@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { prefs } from '../preferences.svelte';
 	import { m } from '$lib/paraglide/messages.js';
-	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
+	import { getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
 	import { goto } from '$app/navigation';
-	import { resolveRoute } from '$app/paths';
 
 	let {
 		onOpenSettings,
@@ -48,7 +47,7 @@
 	}
 
 	function handleAbout() {
-		goto(resolveRoute('/about'));
+		goto(localizeHref('/about'));
 	}
 </script>
 
