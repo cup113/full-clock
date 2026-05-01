@@ -1,5 +1,5 @@
 export interface SyncResult {
-	offset: number;      // server - local (ms), positive means local is behind
+	offset: number; // server - local (ms), positive means local is behind
 	errorMargin: number; // ±ms
 	serverTime: number;
 }
@@ -22,9 +22,15 @@ let syncedOffset = $state(0);
 let syncErrorMargin = $state(0);
 let syncApplied = $state(false);
 
-export function getSyncedOffset() { return syncedOffset; }
-export function getSyncErrorMargin() { return syncErrorMargin; }
-export function isSyncApplied() { return syncApplied; }
+export function getSyncedOffset() {
+	return syncedOffset;
+}
+export function getSyncErrorMargin() {
+	return syncErrorMargin;
+}
+export function isSyncApplied() {
+	return syncApplied;
+}
 
 export function applySync(result: SyncResult) {
 	syncedOffset = result.offset;

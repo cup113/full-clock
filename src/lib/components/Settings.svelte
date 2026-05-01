@@ -2,27 +2,51 @@
 	import { prefs, save, type Preferences } from '../preferences.svelte';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
-	import { syncTime, applySync, removeSync, getSyncErrorMargin, isSyncApplied } from '../time.svelte';
+	import {
+		syncTime,
+		applySync,
+		removeSync,
+		getSyncErrorMargin,
+		isSyncApplied,
+		type SyncResult
+	} from '../time.svelte';
 
 	let { open, onClose }: { open: boolean; onClose: () => void } = $props();
 
 	let draft = $state<Preferences>({ ...prefs });
-	let syncStatus = $state<'idle' | 'computing' | 'done'>('idle');
-	let syncMargin = $state(0);
+	let syncStatus = $state<'idle' | 'computing' | 'done' | 'applied'>('idle');
+	let syncResult = $state<SyncResult | null>(null);
 
 	const secondStyleLabels: Record<string, () => string> = {
-		'fullscreen-bar': m["secondStyle_fullscreenBar"],
-		'top-bar': m["secondStyle_topBar"],
-		'digital': m["secondStyle_digital"],
-		'off': m["secondStyle_off"],
+		'fullscreen-bar': m.secondStyle_fullscreenBar,
+		'top-bar': m.secondStyle_topBar,
+		digital: m.secondStyle_digital,
+		off: m.secondStyle_off
 	};
 
 	$effect(() => {
 		if (open) {
 			draft = { ...prefs };
-			syncStatus = 'idle';
+			if (isSyncApplied()) {
+				syncStatus = 'applied';
+				syncResult = null;
+			} else {
+				autoSync();
+			}
 		}
 	});
+
+	async function autoSync() {
+		syncStatus = 'computing';
+		syncResult = null;
+		try {
+			const result = await syncTime();
+			syncResult = result;
+			syncStatus = 'done';
+		} catch {
+			syncStatus = 'idle';
+		}
+	}
 
 	function handleSave() {
 		Object.assign(prefs, draft);
@@ -30,21 +54,17 @@
 		onClose();
 	}
 
-	async function handleSync() {
-		syncStatus = 'computing';
-		try {
-			const result = await syncTime();
-			applySync(result);
-			syncMargin = result.errorMargin;
-			syncStatus = 'done';
-		} catch {
-			syncStatus = 'idle';
+	function handleApply() {
+		if (syncResult) {
+			applySync(syncResult);
+			syncStatus = 'applied';
 		}
 	}
 
 	function handleRemoveSync() {
 		removeSync();
 		syncStatus = 'idle';
+		syncResult = null;
 	}
 
 	function handleLangChange(lang: 'en' | 'zh') {
@@ -54,24 +74,47 @@
 </script>
 
 {#if open}
-	<div class="overlay" onclick={onClose} onkeydown={(e) => e.key === 'Escape' && onClose()} role="dialog" tabindex="-1">
-		<div class="panel" onclick={(e) => e.stopPropagation()} role="presentation">
-			<div class="panel-header">
-				<h2>{m.settings()}</h2>
-				<button class="close-btn" onclick={onClose} aria-label={m.close()}>
-					<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M18 6L6 18M6 6l12 12"/>
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+		onclick={onClose}
+		onkeydown={(e) => e.key === 'Escape' && onClose()}
+		role="dialog"
+		tabindex="-1"
+	>
+		<div
+			class="flex max-h-[85vh] w-[90%] max-w-lg flex-col overflow-hidden rounded-xl bg-[#1a1a2e] text-gray-200 shadow-2xl"
+			onclick={(e) => e.stopPropagation()}
+			role="presentation"
+		>
+			<div class="flex items-center justify-between border-b border-gray-700 px-5 py-4">
+				<h2 class="m-0 text-lg font-semibold">{m.settings()}</h2>
+				<button
+					class="cursor-pointer rounded border-none bg-transparent p-1 text-gray-400 transition-colors hover:text-white"
+					onclick={onClose}
+					aria-label={m.close()}
+				>
+					<svg
+						viewBox="0 0 24 24"
+						width="20"
+						height="20"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M18 6L6 18M6 6l12 12" />
 					</svg>
 				</button>
 			</div>
 
-			<div class="panel-body">
+			<div class="flex-1 space-y-5 overflow-y-auto px-5 py-4">
 				<!-- Seconds Display -->
 				<section>
-					<h3>{m["secondStyle"]()}</h3>
-					<div class="radio-group">
+					<h3 class="mb-2 text-sm font-medium opacity-80">{m.secondStyle()}</h3>
+					<div class="flex flex-wrap gap-2">
 						{#each ['fullscreen-bar', 'top-bar', 'digital', 'off'] as val (val)}
-							<label class="radio-label">
+							<label class="flex cursor-pointer items-center gap-1.5 text-xs">
 								<input type="radio" name="secondStyle" value={val} bind:group={draft.secondStyle} />
 								<span>{secondStyleLabels[val]()}</span>
 							</label>
@@ -81,218 +124,162 @@
 
 				<!-- Title Style -->
 				<section>
-					<h3>{m["titleStyle"]()}</h3>
-					<div class="radio-group">
-						<label class="radio-label">
+					<h3 class="mb-2 text-sm font-medium opacity-80">{m.titleStyle()}</h3>
+					<div class="flex flex-wrap gap-2">
+						<label class="flex cursor-pointer items-center gap-1.5 text-xs">
 							<input type="radio" name="titleStyle" value="date" bind:group={draft.titleStyle} />
-							<span>{m["titleStyle_date"]()}</span>
+							<span>{m.titleStyle_date()}</span>
 						</label>
-						<label class="radio-label">
+						<label class="flex cursor-pointer items-center gap-1.5 text-xs">
 							<input type="radio" name="titleStyle" value="custom" bind:group={draft.titleStyle} />
-							<span>{m["titleStyle_custom"]()}</span>
+							<span>{m.titleStyle_custom()}</span>
 						</label>
-						<label class="radio-label">
+						<label class="flex cursor-pointer items-center gap-1.5 text-xs">
 							<input type="radio" name="titleStyle" value="off" bind:group={draft.titleStyle} />
-							<span>{m["titleStyle_off"]()}</span>
+							<span>{m.titleStyle_off()}</span>
 						</label>
 					</div>
 					{#if draft.titleStyle === 'custom'}
-						<input class="text-input" type="text" bind:value={draft.titleCustomized} placeholder={m["titleCustomized"]()} />
+						<input
+							class="mt-2 box-border w-full rounded-md border border-gray-600 bg-gray-800 px-2.5 py-2 text-xs text-gray-200"
+							type="text"
+							bind:value={draft.titleCustomized}
+							placeholder={m.titleCustomized()}
+						/>
 					{/if}
 				</section>
 
 				<!-- Colors -->
 				<section>
-					<h3>{m.colors()}</h3>
-					<div class="color-group">
-						<label class="color-label">
+					<h3 class="mb-2 text-sm font-medium opacity-80">{m.colors()}</h3>
+					<div class="flex flex-col gap-2">
+						<label class="flex items-center gap-2.5 text-xs">
 							<span>{m.background()}</span>
-							<input type="color" bind:value={draft.background} />
+							<input
+								type="color"
+								bind:value={draft.background}
+								class="h-7.5 w-10 cursor-pointer border-none bg-transparent p-0"
+							/>
 						</label>
-						<label class="color-label">
+						<label class="flex items-center gap-2.5 text-xs">
 							<span>{m.foreground()}</span>
-							<input type="color" bind:value={draft.foreground} />
+							<input
+								type="color"
+								bind:value={draft.foreground}
+								class="h-7.5 w-10 cursor-pointer border-none bg-transparent p-0"
+							/>
 						</label>
-						<label class="color-label">
-							<span>{m["colorProgress"]()}</span>
-							<input type="color" bind:value={draft.colorProgress} />
+						<label class="flex items-center gap-2.5 text-xs">
+							<span>{m.colorProgress()}</span>
+							<input
+								type="color"
+								bind:value={draft.colorProgress}
+								class="h-7.5 w-10 cursor-pointer border-none bg-transparent p-0"
+							/>
 						</label>
+					</div>
+				</section>
+
+				<!-- Progress Opacity -->
+				<section>
+					<h3 class="mb-2 text-sm font-medium opacity-80">{m.progressOpacity()}</h3>
+					<div class="flex items-center gap-3">
+						<input
+							type="range"
+							min="0"
+							max="100"
+							bind:value={draft.progressOpacity}
+							class="flex-1 accent-blue-500"
+						/>
+						<span class="w-8 text-right text-xs tabular-nums">{draft.progressOpacity}%</span>
 					</div>
 				</section>
 
 				<!-- Font -->
 				<section>
-					<h3>{m["fontFamily"]()}</h3>
-					<p class="hint">{m["fontFamilyHint"]()}</p>
-					<input class="text-input" type="text" bind:value={draft.fontFamily} />
+					<h3 class="mb-2 text-sm font-medium opacity-80">{m.fontFamily()}</h3>
+					<p class="mb-2 text-xs opacity-50">{m.fontFamilyHint()}</p>
+					<input
+						class="box-border w-full rounded-md border border-gray-600 bg-gray-800 px-2.5 py-2 text-xs text-gray-200"
+						type="text"
+						bind:value={draft.fontFamily}
+					/>
 				</section>
 
 				<!-- Time Sync -->
 				<section>
-					<h3>{m["timeSync"]()}</h3>
-					<p class="hint">{m["timeSyncDesc"]()}</p>
-					{#if syncStatus === 'idle'}
-						{#if isSyncApplied()}
-							<p class="sync-info">{m["timeSyncError"]()}: ±{getSyncErrorMargin().toFixed(0)}ms</p>
-							<button class="btn" onclick={handleRemoveSync}>{m["timeSyncRemove"]()}</button>
-						{:else}
-							<button class="btn" onclick={handleSync}>{m["timeSyncApply"]()}</button>
-						{/if}
-					{:else if syncStatus === 'computing'}
-						<p>{m["timeSyncComputing"]()}</p>
-					{:else if syncStatus === 'done'}
-						<p class="sync-info">{m["timeSyncDone"]()} ({m["timeSyncError"]()}: ±{syncMargin.toFixed(0)}ms)</p>
-						<button class="btn" onclick={handleRemoveSync}>{m["timeSyncRemove"]()}</button>
+					<h3 class="mb-2 text-sm font-medium opacity-80">{m.timeSync()}</h3>
+					<p class="mb-2 text-xs opacity-50">{m.timeSyncDesc()}</p>
+					{#if syncStatus === 'computing'}
+						<p class="mb-2 text-xs opacity-70">{m.timeSyncComputing()}</p>
+					{:else if syncStatus === 'done' && syncResult}
+						<p class="mb-2 text-xs opacity-80">
+							{syncResult.offset > 0
+								? m.timeSyncSlower({
+										offset: Math.abs(syncResult.offset).toFixed(0),
+										error: syncResult.errorMargin.toFixed(0)
+									})
+								: m.timeSyncFaster({
+										offset: Math.abs(syncResult.offset).toFixed(0),
+										error: syncResult.errorMargin.toFixed(0)
+									})}
+						</p>
+						<button
+							class="cursor-pointer rounded-md border-none bg-blue-600 px-5 py-2 text-xs text-gray-200 transition-colors hover:bg-blue-700"
+							onclick={handleApply}
+							data-umami-event="apply-time-sync">{m.timeSyncApply()}</button
+						>
+					{:else if syncStatus === 'applied'}
+						<p class="mb-2 text-xs opacity-70">
+							{m.timeSyncDone()} ({m.timeSyncError()}: &plusmn;{getSyncErrorMargin().toFixed(0)}ms)
+						</p>
+						<button
+							class="cursor-pointer rounded-md border border-gray-500 bg-gray-700 px-5 py-2 text-xs text-gray-200 transition-colors hover:bg-gray-600"
+							onclick={handleRemoveSync}>{m.timeSyncRemove()}</button
+						>
+					{:else if syncStatus === 'idle'}
+						<button
+							class="cursor-pointer rounded-md border border-gray-500 bg-gray-700 px-5 py-2 text-xs text-gray-200 transition-colors hover:bg-gray-600"
+							onclick={autoSync}>{m.timeSyncApply()}</button
+						>
 					{/if}
 				</section>
 
 				<!-- Language -->
 				<section>
-					<h3>{m.language()}</h3>
-					<div class="radio-group">
-						<label class="radio-label">
-							<input type="radio" name="lang" value="zh" checked={getLocale() === 'zh'} onchange={() => handleLangChange('zh')} />
+					<h3 class="mb-2 text-sm font-medium opacity-80">{m.language()}</h3>
+					<div class="flex flex-wrap gap-2">
+						<label class="flex cursor-pointer items-center gap-1.5 text-xs">
+							<input
+								type="radio"
+								name="lang"
+								value="zh"
+								checked={getLocale() === 'zh'}
+								onchange={() => handleLangChange('zh')}
+							/>
 							<span>中文</span>
 						</label>
-						<label class="radio-label">
-							<input type="radio" name="lang" value="en" checked={getLocale() === 'en'} onchange={() => handleLangChange('en')} />
+						<label class="flex cursor-pointer items-center gap-1.5 text-xs">
+							<input
+								type="radio"
+								name="lang"
+								value="en"
+								checked={getLocale() === 'en'}
+								onchange={() => handleLangChange('en')}
+							/>
 							<span>English</span>
 						</label>
 					</div>
 				</section>
 			</div>
 
-			<div class="panel-footer">
-				<button class="btn primary" onclick={handleSave}>{m.save()}</button>
+			<div class="flex justify-end border-t border-gray-700 px-5 py-3">
+				<button
+					class="cursor-pointer rounded-md border-none bg-blue-600 px-5 py-2 text-xs text-gray-200 transition-colors hover:bg-blue-700"
+					onclick={handleSave}
+					data-umami-event="save-settings">{m.save()}</button
+				>
 			</div>
 		</div>
 	</div>
 {/if}
-
-<style>
-	.overlay {
-		position: fixed;
-		inset: 0;
-		background: rgba(0, 0, 0, 0.6);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 100;
-	}
-	.panel {
-		background: #1a1a2e;
-		color: #eee;
-		border-radius: 12px;
-		width: 90%;
-		max-width: 500px;
-		max-height: 85vh;
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-	}
-	.panel-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 16px 20px;
-		border-bottom: 1px solid #333;
-	}
-	.panel-header h2 {
-		margin: 0;
-		font-size: 18px;
-	}
-	.close-btn {
-		background: none;
-		border: none;
-		cursor: pointer;
-		color: #aaa;
-		padding: 4px;
-	}
-	.close-btn:hover { color: #fff; }
-	.panel-body {
-		padding: 16px 20px;
-		overflow-y: auto;
-		flex: 1;
-	}
-	section {
-		margin-bottom: 20px;
-	}
-	section h3 {
-		font-size: 14px;
-		margin: 0 0 8px;
-		opacity: 0.8;
-	}
-	.hint {
-		font-size: 12px;
-		opacity: 0.5;
-		margin: 0 0 8px;
-	}
-	.radio-group {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-	}
-	.radio-label {
-		display: flex;
-		align-items: center;
-		gap: 4px;
-		font-size: 13px;
-		cursor: pointer;
-	}
-	.text-input {
-		width: 100%;
-		padding: 8px 10px;
-		border: 1px solid #444;
-		border-radius: 6px;
-		background: #222;
-		color: #eee;
-		font-size: 13px;
-		margin-top: 8px;
-		box-sizing: border-box;
-	}
-	.color-group {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-	.color-label {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font-size: 13px;
-	}
-	.color-label input[type="color"] {
-		width: 40px;
-		height: 30px;
-		border: none;
-		padding: 0;
-		cursor: pointer;
-		background: none;
-	}
-	.sync-info {
-		font-size: 12px;
-		opacity: 0.7;
-		margin: 0 0 8px;
-	}
-	.panel-footer {
-		padding: 12px 20px;
-		border-top: 1px solid #333;
-		display: flex;
-		justify-content: flex-end;
-	}
-	.btn {
-		padding: 8px 20px;
-		border: 1px solid #555;
-		border-radius: 6px;
-		background: #333;
-		color: #eee;
-		cursor: pointer;
-		font-size: 13px;
-	}
-	.btn:hover { background: #444; }
-	.btn.primary {
-		background: #0066cc;
-		border-color: #0066cc;
-	}
-	.btn.primary:hover { background: #0052a3; }
-</style>

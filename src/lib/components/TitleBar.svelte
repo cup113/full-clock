@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { prefs } from '../preferences.svelte';
 	import { m } from '$lib/paraglide/messages.js';
-	import { getLocale } from '$lib/paraglide/runtime.js';
+	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
+	import { goto } from '$app/navigation';
+	import { resolveRoute } from '$app/paths';
 
-	let { onOpenSettings, onToggleFullscreen }: { onOpenSettings: () => void; onToggleFullscreen: () => void } = $props();
+	let {
+		onOpenSettings,
+		onToggleFullscreen
+	}: { onOpenSettings: () => void; onToggleFullscreen: () => void } = $props();
 
 	let dateStr = $state('');
 
@@ -14,7 +19,12 @@
 				const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 				dateStr = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${weekdays[d.getDay()]}`;
 			} else {
-				dateStr = d.toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+				dateStr = d.toLocaleDateString('en', {
+					weekday: 'long',
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric'
+				});
 			}
 		};
 		update();
@@ -25,74 +35,130 @@
 	let isFullscreen = $state(false);
 
 	$effect(() => {
-		const handler = () => { isFullscreen = !!document.fullscreenElement; };
+		const handler = () => {
+			isFullscreen = !!document.fullscreenElement;
+		};
 		document.addEventListener('fullscreenchange', handler);
 		return () => document.removeEventListener('fullscreenchange', handler);
 	});
+
+	function toggleLang() {
+		const next = getLocale() === 'en' ? 'zh' : 'en';
+		setLocale(next);
+	}
+
+	function handleAbout() {
+		goto(resolveRoute('/about'));
+	}
 </script>
 
-<div class="title-bar">
-	<button class="corner-btn left" onclick={onOpenSettings} aria-label={m.settings()}>
-		<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-			<circle cx="12" cy="12" r="3"/>
-			<path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-		</svg>
-	</button>
+<div
+	class="pointer-events-none absolute top-0 right-0 left-0 z-20 flex items-start justify-between px-3 py-2"
+>
+	<div class="pointer-events-auto flex items-center gap-1">
+		<button
+			onclick={onOpenSettings}
+			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
+			aria-label={m.settings()}
+			data-umami-event="open-settings"
+		>
+			<svg
+				viewBox="0 0 24 24"
+				width="22"
+				height="22"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<circle cx="12" cy="12" r="3" />
+				<path
+					d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+				/>
+			</svg>
+		</button>
+		<button
+			onclick={handleAbout}
+			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
+			aria-label={m.about()}
+			data-umami-event="open-about"
+		>
+			<svg
+				viewBox="0 0 24 24"
+				width="22"
+				height="22"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<circle cx="12" cy="12" r="10" />
+				<path d="M12 16v-4" />
+				<circle cx="12" cy="8" r="0.5" fill="currentColor" />
+			</svg>
+		</button>
+	</div>
 
-	<div class="title-center">
+	<div class="pointer-events-auto flex-1 px-3 text-center">
 		{#if prefs.titleStyle === 'date'}
-			<span class="title-text">{dateStr}</span>
+			<span class="text-xl opacity-70">{dateStr}</span>
 		{:else if prefs.titleStyle === 'custom' && prefs.titleCustomized}
-			<span class="title-text">{prefs.titleCustomized}</span>
+			<span class="text-xl opacity-70">{prefs.titleCustomized}</span>
 		{/if}
 	</div>
 
-	<button class="corner-btn right" onclick={onToggleFullscreen} aria-label={isFullscreen ? m["exitFullscreen"]() : m.fullscreen()}>
-		<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-			{#if isFullscreen}
-				<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
-			{:else}
-				<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-			{/if}
-		</svg>
-	</button>
+	<div class="pointer-events-auto flex items-center gap-1">
+		<button
+			onclick={toggleLang}
+			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
+			aria-label={m.language()}
+			data-umami-event="toggle-language"
+		>
+			<svg
+				viewBox="0 0 24 24"
+				width="22"
+				height="22"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<circle cx="12" cy="12" r="10" />
+				<path d="M2 12h20" />
+				<path
+					d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+				/>
+			</svg>
+		</button>
+		<button
+			onclick={onToggleFullscreen}
+			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
+			aria-label={isFullscreen ? m.exitFullscreen() : m.fullscreen()}
+			data-umami-event="toggle-fullscreen"
+		>
+			<svg
+				viewBox="0 0 24 24"
+				width="22"
+				height="22"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				{#if isFullscreen}
+					<path
+						d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"
+					/>
+				{:else}
+					<path
+						d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+					/>
+				{/if}
+			</svg>
+		</button>
+	</div>
 </div>
-
-<style>
-	.title-bar {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		padding: 8px 12px;
-		z-index: 20;
-		pointer-events: none;
-	}
-	.corner-btn {
-		pointer-events: auto;
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 6px;
-		border-radius: 6px;
-		opacity: 0.7;
-		transition: opacity 0.2s;
-		color: inherit;
-	}
-	.corner-btn:hover {
-		opacity: 1;
-	}
-	.title-center {
-		pointer-events: auto;
-		flex: 1;
-		text-align: center;
-		padding: 0 12px;
-	}
-	.title-text {
-		font-size: 14px;
-		opacity: 0.8;
-	}
-</style>

@@ -5,7 +5,9 @@
 	let now = $state(Date.now());
 
 	$effect(() => {
-		const interval = setInterval(() => { now = Date.now(); }, 100);
+		const interval = setInterval(() => {
+			now = Date.now();
+		}, 100);
 		return () => clearInterval(interval);
 	});
 
@@ -15,24 +17,15 @@
 </script>
 
 {#if prefs.secondStyle === 'fullscreen-bar'}
-	<div class="bar fullscreen" style="width: {pct}%; background: {prefs.colorProgress};"></div>
+	<div
+		class="pointer-events-none absolute top-0 left-0 h-full transition-none"
+		style="width: {pct}%; background: {prefs.colorProgress}; opacity: {prefs.progressOpacity /
+			100};"
+	></div>
 {:else if prefs.secondStyle === 'top-bar'}
-	<div class="bar top" style="width: {pct}%; background: {prefs.colorProgress};"></div>
+	<div
+		class="pointer-events-none absolute top-0 left-0 h-1.5 transition-none"
+		style="width: {pct}%; background: {prefs.colorProgress}; opacity: {prefs.progressOpacity /
+			100};"
+	></div>
 {/if}
-
-<style>
-	.bar {
-		position: absolute;
-		pointer-events: none;
-	}
-	.bar.fullscreen {
-		top: 0;
-		left: 0;
-		height: 100%;
-	}
-	.bar.top {
-		top: 0;
-		left: 0;
-		height: 6px;
-	}
-</style>

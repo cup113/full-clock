@@ -1,100 +1,66 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages.js';
+	import { resolveRoute } from '$app/paths';
 </script>
 
 <svelte:head>
-	<title>{m["aboutTitle"]()}</title>
+	<title>{m.aboutTitle()}</title>
 </svelte:head>
 
-<div class="about-page">
-	<div class="card">
-		<h1>{m["aboutTitle"]()}</h1>
+<div
+	class="fixed inset-0 flex items-center justify-center overflow-y-auto bg-[#004400] font-[Arial,等线,sans-serif] text-white"
+>
+	<div class="max-w-lg px-8 py-10 text-center">
+		<h1 class="m-0 mb-8 text-2xl font-bold">{m.aboutTitle()}</h1>
 
-		<div class="features">
-			<div class="feature">
-				<h2>{m["aboutFeature1"]()}</h2>
-				<p>{m["aboutFeature1Desc"]()}</p>
+		<div class="mb-8 flex flex-col gap-6">
+			<div>
+				<h2 class="m-0 mb-2 text-lg font-semibold">{m.aboutFeature1()}</h2>
+				<p class="m-0 text-sm leading-relaxed opacity-80">{m.aboutFeature1Desc()}</p>
 			</div>
-			<div class="feature">
-				<h2>{m["aboutFeature2"]()}</h2>
-				<p>{m["aboutFeature2Desc"]()}</p>
+			<div>
+				<h2 class="m-0 mb-2 text-lg font-semibold">{m.aboutFeature2()}</h2>
+				<p class="m-0 text-sm leading-relaxed opacity-80">{m.aboutFeature2Desc()}</p>
 			</div>
-			<div class="feature">
-				<h2>{m["aboutFeature3"]()}</h2>
-				<p>{m["aboutFeature3Desc"]()}</p>
+			<div>
+				<h2 class="m-0 mb-2 text-lg font-semibold">{m.aboutFeature3()}</h2>
+				<p class="m-0 text-sm leading-relaxed opacity-80">{m.aboutFeature3Desc()}</p>
 			</div>
 		</div>
 
-		<div class="links">
-			<p>{m["aboutCredit"]()} (<a href="https://www.freepik.com" target="_blank" rel="noopener">Freepik</a>)</p>
-			<p>{m["aboutRepo"]()}: <a href="https://github.com/cup113/full-clock" target="_blank" rel="noopener">github.com/cup113/full-clock</a></p>
-			<p>{m["aboutFeedback"]()}: <a href="https://f.kdocs.cn/g/iuGauWIo/" target="_blank" rel="noopener">f.kdocs.cn/g/iuGauWIo/</a></p>
+		<div class="mb-8 space-y-1 text-xs opacity-70">
+			<p class="m-0">
+				{m.aboutCredit()} (<a
+					href="https://www.freepik.com"
+					target="_blank"
+					rel="noopener"
+					class="text-[#88bbff] no-underline hover:underline">Freepik</a
+				>)
+			</p>
+			<p class="m-0">
+				{m.aboutRepo()}:
+				<a
+					href="https://github.com/cup113/full-clock"
+					target="_blank"
+					rel="noopener"
+					class="text-[#88bbff] no-underline hover:underline">github.com/cup113/full-clock</a
+				>
+			</p>
+			<p class="m-0">
+				{m.aboutFeedback()}:
+				<a
+					href="https://f.kdocs.cn/g/iuGauWIo/"
+					target="_blank"
+					rel="noopener"
+					class="text-[#88bbff] no-underline hover:underline">f.kdocs.cn/g/iuGauWIo/</a
+				>
+			</p>
 		</div>
 
-		<a href="/" class="back-link">{m["backToHome"]()}</a>
+		<a
+			href={resolveRoute('/')}
+			class="inline-block rounded-lg border border-white/30 px-8 py-2.5 text-sm text-white no-underline transition-colors hover:bg-white/10"
+			>{m.backToHome()}</a
+		>
 	</div>
 </div>
-
-<style>
-	.about-page {
-		position: fixed;
-		inset: 0;
-		background: #004400;
-		color: #fff;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-family: Arial, 等线, sans-serif;
-		overflow-y: auto;
-	}
-	.card {
-		max-width: 600px;
-		padding: 40px 32px;
-		text-align: center;
-	}
-	h1 {
-		font-size: 28px;
-		margin: 0 0 32px;
-	}
-	.features {
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-		margin-bottom: 32px;
-	}
-	.feature h2 {
-		font-size: 20px;
-		margin: 0 0 8px;
-	}
-	.feature p {
-		font-size: 14px;
-		opacity: 0.8;
-		margin: 0;
-		line-height: 1.6;
-	}
-	.links {
-		font-size: 13px;
-		opacity: 0.7;
-		margin-bottom: 32px;
-	}
-	.links a {
-		color: #88bbff;
-		text-decoration: none;
-	}
-	.links a:hover {
-		text-decoration: underline;
-	}
-	.back-link {
-		display: inline-block;
-		padding: 10px 32px;
-		border: 1px solid rgba(255,255,255,0.3);
-		border-radius: 8px;
-		color: #fff;
-		text-decoration: none;
-		font-size: 15px;
-		transition: background 0.2s;
-	}
-	.back-link:hover {
-		background: rgba(255,255,255,0.1);
-	}
-</style>

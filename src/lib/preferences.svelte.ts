@@ -6,6 +6,7 @@ export interface Preferences {
 	fontFamily: string;
 	secondStyle: 'fullscreen-bar' | 'top-bar' | 'digital' | 'off';
 	colorProgress: string;
+	progressOpacity: number;
 	titleStyle: 'date' | 'custom' | 'off';
 	titleCustomized: string;
 }
@@ -15,9 +16,10 @@ export const defaults: Preferences = {
 	foreground: '#FFFFFF',
 	fontFamily: 'Arial, 等线, sans-serif',
 	secondStyle: 'fullscreen-bar',
-	colorProgress: '#00550080',
+	colorProgress: '#005500',
+	progressOpacity: 20,
 	titleStyle: 'date',
-	titleCustomized: '',
+	titleCustomized: ''
 };
 
 function load(): Preferences {
@@ -28,7 +30,9 @@ function load(): Preferences {
 			const parsed = JSON.parse(raw);
 			return { ...defaults, ...parsed };
 		}
-	} catch { /* ignore */ }
+	} catch {
+		/* ignore */
+	}
 	return { ...defaults };
 }
 

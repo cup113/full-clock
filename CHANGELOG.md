@@ -42,10 +42,12 @@ and this project adheres to [Semantic Versioning].
 - 增加上方标题功能栏
 
 <!-- Links -->
+
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
+
 [0.1.0]: https://github.com/cup113/full-clock/releases/v0.1.0
 [0.1.1]: https://github.com/cup113/full-clock/compare/v0.1.0..v0.1.1
 [0.1.2]: https://github.com/cup113/full-clock/compare/v0.1.1..v0.1.2
