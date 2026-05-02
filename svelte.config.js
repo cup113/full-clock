@@ -8,7 +8,13 @@ const config = {
 	},
 	kit: {
 		adapter: adapter(),
-		paths: { relative: false }
+		paths: { relative: false },
+		prerender: {
+			entries: ['/', '/about', '/zh/', '/en/', '/zh/about', '/en/about']
+		},
+		output: {
+			bundleStrategy: 'single'
+		}
 	}
 };
 
