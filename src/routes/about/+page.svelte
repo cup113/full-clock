@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages.js';
-	import { resolveRoute } from '$app/paths';
+	import { localizeHref } from '$lib/paraglide/runtime.js';
 </script>
 
 <svelte:head>
@@ -34,6 +34,7 @@
 					href="https://www.freepik.com"
 					target="_blank"
 					rel="noopener"
+					data-umami-event="click-about-favicon"
 					class="text-[#88bbff] no-underline hover:underline">Freepik</a
 				>)
 			</p>
@@ -43,7 +44,18 @@
 					href="https://github.com/cup113/full-clock"
 					target="_blank"
 					rel="noopener"
+					data-umami-event="click-about-repo"
 					class="text-[#88bbff] no-underline hover:underline">github.com/cup113/full-clock</a
+				>
+			</p>
+			<p class="m-0">
+				{m.aboutTimeApi()}:
+				<a
+					href="https://api.shijian.online"
+					target="_blank"
+					rel="noopener"
+					data-umami-event="click-about-timeapi"
+					class="text-[#88bbff] no-underline hover:underline">api.shijian.online</a
 				>
 			</p>
 			<p class="m-0">
@@ -52,13 +64,14 @@
 					href="https://f.kdocs.cn/g/iuGauWIo/"
 					target="_blank"
 					rel="noopener"
+					data-umami-event="click-about-feedback"
 					class="text-[#88bbff] no-underline hover:underline">f.kdocs.cn/g/iuGauWIo/</a
 				>
 			</p>
 		</div>
 
 		<a
-			href={resolveRoute('/')}
+			href={localizeHref('/')}
 			class="inline-block rounded-lg border border-white/30 px-8 py-2.5 text-sm text-white no-underline transition-colors hover:bg-white/10"
 			>{m.backToHome()}</a
 		>

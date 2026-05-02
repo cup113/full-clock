@@ -1,11 +1,27 @@
 <script lang="ts">
 	import { prefs } from '$lib/preferences.svelte';
+	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import Clock from '$lib/components/Clock.svelte';
 	import SecondBar from '$lib/components/SecondBar.svelte';
 	import TitleBar from '$lib/components/TitleBar.svelte';
 	import Settings from '$lib/components/Settings.svelte';
 
 	let showSettings = $state(false);
+	let checkedLang = $state(false);
+
+	$effect(() => {
+		if (checkedLang) return;
+		checkedLang = true;
+
+		const userChoice = localStorage.getItem('FL_locale_choice');
+		if (userChoice) return;
+
+		const hasChineseLang = navigator.languages?.some((l) => l.startsWith('zh'));
+		if (hasChineseLang && getLocale() === 'en' && !window.location.pathname.startsWith('/zh')) {
+			window.umami?.track('auto-redirect-zh');
+			setLocale('zh');
+		}
+	});
 
 	function toggleFullscreen() {
 		if (!document.fullscreenElement) {

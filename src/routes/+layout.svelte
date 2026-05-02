@@ -1,12 +1,13 @@
 <script lang="ts">
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.ico';
+	import { m } from '$lib/paraglide/messages.js';
 
 	let { children } = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<title>{m.siteTitle()}</title>
+	<link rel="icon" href="/favicon.png" />
 	<script
 		defer
 		src="https://umami.cup11.top/script.js"

@@ -32,6 +32,7 @@
 	"timeSyncFaster": "电脑比标准时间快{offset}ms（误差±{error}ms）",
 	"timeSyncSlower": "电脑比标准时间慢{offset}ms（误差±{error}ms）",
 	"language": "语言",
+	"siteTitle": "全屏时钟",
 	"save": "保存",
 	"close": "关闭",
 	"about": "关于",
@@ -46,5 +47,9 @@
 	"aboutRepo": "代码仓库",
 	"aboutFeedback": "反馈表单",
 	"backToHome": "返回主页",
-	"faviconCredit": "Freepik"
+	"reset": "重置",
+	"faviconCredit": "Freepik",
+	"keepScreenOn": "保持亮屏",
+	"screenWillStayOn": "屏幕将保持常亮",
+	"aboutTimeApi": "时间校准 API"
 }

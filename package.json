@@ -1,7 +1,7 @@
 {
 	"name": "full-clock",
 	"private": true,
-	"version": "0.0.1",
+	"version": "0.2.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -34,6 +34,7 @@
 		"tailwindcss": "^4.2.2",
 		"typescript": "^6.0.2",
 		"typescript-eslint": "^8.58.1",
-		"vite": "^8.0.7"
+		"vite": "^8.0.7",
+		"vite-plugin-pwa": "^1.2.0"
 	}
 }

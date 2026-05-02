@@ -1,8 +1,39 @@
 <script lang="ts">
 	import { prefs } from '../preferences.svelte';
-	import { m } from '$lib/paraglide/messages.js';
-	import { getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
-	import { goto } from '$app/navigation';
+import { m } from '$lib/paraglide/messages.js';
+import { getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
+import { goto } from '$app/navigation';
+
+let wakeLockSentinel: WakeLockSentinel | null = $state(null);
+let wakeLockSupported = $state('wakeLock' in navigator);
+
+async function requestWakeLock() {
+	if (!wakeLockSupported) return;
+	try {
+		const sentinel = await navigator.wakeLock.request('screen');
+		sentinel.addEventListener('release', () => {
+			wakeLockSentinel = null;
+		});
+		wakeLockSentinel = sentinel;
+	} catch {
+		wakeLockSentinel = null;
+	}
+}
+
+function releaseWakeLock() {
+	if (wakeLockSentinel) {
+		wakeLockSentinel.release();
+		wakeLockSentinel = null;
+	}
+}
+
+function toggleWakeLock() {
+	if (wakeLockSentinel) {
+		releaseWakeLock();
+	} else {
+		requestWakeLock();
+	}
+}
 
 	let {
 		onOpenSettings,
@@ -41,9 +72,13 @@
 		return () => document.removeEventListener('fullscreenchange', handler);
 	});
 
-	function toggleLang() {
-		const next = getLocale() === 'en' ? 'zh' : 'en';
-		setLocale(next);
+	function handleLang(lang: 'en' | 'zh') {
+		setLocale(lang);
+		if (lang === 'en') {
+			localStorage.setItem('FL_locale_choice', 'en');
+		} else {
+			localStorage.removeItem('FL_locale_choice');
+		}
 	}
 
 	function handleAbout() {
@@ -56,9 +91,24 @@
 >
 	<div class="pointer-events-auto flex items-center gap-1">
 		<button
+			onclick={toggleWakeLock}
+			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
+			class:opacity-100={!!wakeLockSentinel}
+			class:text-[#ffd700]={!!wakeLockSentinel}
+			aria-label={wakeLockSentinel ? m.screenWillStayOn() : m.keepScreenOn()}
+			title={wakeLockSentinel ? m.screenWillStayOn() : m.keepScreenOn()}
+			data-umami-event="toggle-wakelock"
+		>
+			<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="12" cy="12" r="5" />
+				<path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+			</svg>
+		</button>
+		<button
 			onclick={onOpenSettings}
 			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
 			aria-label={m.settings()}
+			title={m.settings()}
 			data-umami-event="open-settings"
 		>
 			<svg
@@ -81,6 +131,7 @@
 			onclick={handleAbout}
 			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
 			aria-label={m.about()}
+			title={m.about()}
 			data-umami-event="open-about"
 		>
 			<svg
@@ -102,40 +153,35 @@
 
 	<div class="pointer-events-auto flex-1 px-3 text-center">
 		{#if prefs.titleStyle === 'date'}
-			<span class="text-xl opacity-70">{dateStr}</span>
+			<span class="text-2xl font-bold opacity-80">{dateStr}</span>
 		{:else if prefs.titleStyle === 'custom' && prefs.titleCustomized}
-			<span class="text-xl opacity-70">{prefs.titleCustomized}</span>
+			<span class="text-2xl font-bold opacity-80">{prefs.titleCustomized}</span>
 		{/if}
 	</div>
 
-	<div class="pointer-events-auto flex items-center gap-1">
+	<div class="pointer-events-auto flex items-center gap-0.5">
 		<button
-			onclick={toggleLang}
-			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
-			aria-label={m.language()}
-			data-umami-event="toggle-language"
-		>
-			<svg
-				viewBox="0 0 24 24"
-				width="22"
-				height="22"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
-				<circle cx="12" cy="12" r="10" />
-				<path d="M2 12h20" />
-				<path
-					d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
-				/>
-			</svg>
-		</button>
+			onclick={() => handleLang('zh')}
+			class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-inherit text-sm font-bold transition-all duration-200 hover:bg-white/10"
+			class:opacity-40={getLocale() !== 'zh'}
+			class:opacity-100={getLocale() === 'zh'}
+			title="中文"
+			data-umami-event="switch-lang-zh"
+		>中</button>
+		<button
+			onclick={() => handleLang('en')}
+			class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-inherit text-sm font-bold transition-all duration-200 hover:bg-white/10"
+			class:opacity-40={getLocale() !== 'en'}
+			class:opacity-100={getLocale() === 'en'}
+			title="English"
+			data-umami-event="switch-lang-en"
+		>EN</button>
+		<div class="mx-1 h-5 w-px bg-white/20"></div>
 		<button
 			onclick={onToggleFullscreen}
-			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
+			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-80 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
 			aria-label={isFullscreen ? m.exitFullscreen() : m.fullscreen()}
+			title={isFullscreen ? m.exitFullscreen() : m.fullscreen()}
 			data-umami-event="toggle-fullscreen"
 		>
 			<svg

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { prefs, save, type Preferences } from '../preferences.svelte';
+	import { prefs, save, defaults } from '../preferences.svelte';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import {
@@ -13,7 +13,6 @@
 
 	let { open, onClose }: { open: boolean; onClose: () => void } = $props();
 
-	let draft = $state<Preferences>({ ...prefs });
 	let syncStatus = $state<'idle' | 'computing' | 'done' | 'negligible' | 'applied'>('idle');
 	let syncResult = $state<SyncResult | null>(null);
 
@@ -26,7 +25,6 @@
 
 	$effect(() => {
 		if (open) {
-			draft = { ...prefs };
 			if (isSyncApplied()) {
 				syncStatus = 'applied';
 				syncResult = null;
@@ -34,6 +32,10 @@
 				autoSync();
 			}
 		}
+	});
+
+	$effect(() => {
+		save(prefs);
 	});
 
 	async function autoSync() {
@@ -52,12 +54,6 @@
 		}
 	}
 
-	function handleSave() {
-		Object.assign(prefs, draft);
-		save(prefs);
-		onClose();
-	}
-
 	function handleApply() {
 		if (syncResult) {
 			applySync(syncResult);
@@ -73,7 +69,15 @@
 
 	function handleLangChange(lang: 'en' | 'zh') {
 		setLocale(lang);
-		draft = { ...draft };
+		if (lang === 'en') {
+			localStorage.setItem('FL_locale_choice', 'en');
+		} else {
+			localStorage.removeItem('FL_locale_choice');
+		}
+	}
+
+	function handleReset() {
+		Object.assign(prefs, defaults);
 	}
 </script>
 
@@ -123,7 +127,7 @@
 									type="radio"
 									name="secondStyle"
 									value={val}
-									bind:group={draft.secondStyle}
+									bind:group={prefs.secondStyle}
 									class="peer sr-only"
 								/>
 								<span
@@ -133,6 +137,21 @@
 							</label>
 						{/each}
 					</div>
+					{#if prefs.secondStyle === 'fullscreen-bar' || prefs.secondStyle === 'top-bar'}
+						<div class="mt-3">
+							<h4 class="mb-1 text-xs font-medium opacity-70">{m.progressOpacity()}</h4>
+							<div class="flex items-center gap-3">
+								<input
+									type="range"
+									min="0"
+									max="100"
+									bind:value={prefs.progressOpacity}
+									class="flex-1 accent-blue-500 appearance-none cursor-pointer"
+								/>
+								<span class="w-8 text-right text-xs tabular-nums">{prefs.progressOpacity}%</span>
+							</div>
+						</div>
+					{/if}
 				</section>
 
 				<!-- Title Style -->
@@ -144,7 +163,7 @@
 								type="radio"
 								name="titleStyle"
 								value="date"
-								bind:group={draft.titleStyle}
+								bind:group={prefs.titleStyle}
 								class="peer sr-only"
 							/>
 							<span
@@ -157,7 +176,7 @@
 								type="radio"
 								name="titleStyle"
 								value="custom"
-								bind:group={draft.titleStyle}
+								bind:group={prefs.titleStyle}
 								class="peer sr-only"
 							/>
 							<span
@@ -170,7 +189,7 @@
 								type="radio"
 								name="titleStyle"
 								value="off"
-								bind:group={draft.titleStyle}
+								bind:group={prefs.titleStyle}
 								class="peer sr-only"
 							/>
 							<span
@@ -179,11 +198,11 @@
 							<span>{m.titleStyle_off()}</span>
 						</label>
 					</div>
-					{#if draft.titleStyle === 'custom'}
+					{#if prefs.titleStyle === 'custom'}
 						<input
 							class="mt-2 box-border w-full rounded-md border border-gray-600 bg-gray-800 px-2.5 py-2 text-xs text-gray-200"
 							type="text"
-							bind:value={draft.titleCustomized}
+							bind:value={prefs.titleCustomized}
 							placeholder={m.titleCustomized()}
 						/>
 					{/if}
@@ -197,7 +216,7 @@
 							<span>{m.background()}</span>
 							<input
 								type="color"
-								bind:value={draft.background}
+								bind:value={prefs.background}
 								class="h-7.5 w-10 cursor-pointer border-none bg-transparent p-0"
 							/>
 						</label>
@@ -205,7 +224,7 @@
 							<span>{m.foreground()}</span>
 							<input
 								type="color"
-								bind:value={draft.foreground}
+								bind:value={prefs.foreground}
 								class="h-7.5 w-10 cursor-pointer border-none bg-transparent p-0"
 							/>
 						</label>
@@ -213,27 +232,13 @@
 							<span>{m.colorProgress()}</span>
 							<input
 								type="color"
-								bind:value={draft.colorProgress}
+								bind:value={prefs.colorProgress}
 								class="h-7.5 w-10 cursor-pointer border-none bg-transparent p-0"
 							/>
 						</label>
 					</div>
 				</section>
 
-				<!-- Progress Opacity -->
-				<section>
-					<h3 class="mb-2 text-sm font-medium opacity-80">{m.progressOpacity()}</h3>
-					<div class="flex items-center gap-3">
-						<input
-							type="range"
-							min="0"
-							max="100"
-							bind:value={draft.progressOpacity}
-							class="flex-1 accent-blue-500 appearance-none cursor-pointer"
-						/>
-						<span class="w-8 text-right text-xs tabular-nums">{draft.progressOpacity}%</span>
-					</div>
-				</section>
 
 				<!-- Font -->
 				<section>
@@ -242,7 +247,7 @@
 					<input
 						class="box-border w-full rounded-md border border-gray-600 bg-gray-800 px-2.5 py-2 text-xs text-gray-200"
 						type="text"
-						bind:value={draft.fontFamily}
+						bind:value={prefs.fontFamily}
 					/>
 				</section>
 
@@ -277,7 +282,8 @@
 						</p>
 						<button
 							class="cursor-pointer rounded-md border border-gray-500 bg-gray-700 px-5 py-2 text-xs text-gray-200 transition-colors hover:bg-gray-600"
-							onclick={handleRemoveSync}>{m.timeSyncRemove()}</button
+							onclick={handleRemoveSync}
+							data-umami-event="remove-time-sync">{m.timeSyncRemove()}</button
 						>
 					{:else if syncStatus === 'idle'}
 						<button
@@ -323,11 +329,16 @@
 				</section>
 			</div>
 
-			<div class="flex justify-end border-t border-gray-700 px-5 py-3">
+			<div class="flex items-center justify-between border-t border-gray-700 px-5 py-3">
+				<button
+					class="cursor-pointer rounded-md border border-red-500/50 bg-transparent px-5 py-2 text-xs text-red-400 transition-colors hover:bg-red-500/10"
+					onclick={handleReset}
+					data-umami-event="reset-settings">{m.reset()}</button
+				>
 				<button
 					class="cursor-pointer rounded-md border-none bg-blue-600 px-5 py-2 text-xs text-gray-200 transition-colors hover:bg-blue-700"
-					onclick={handleSave}
-					data-umami-event="save-settings">{m.save()}</button
+					onclick={onClose}
+					data-umami-event="close-settings">{m.close()}</button
 				>
 			</div>
 		</div>
