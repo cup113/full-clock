@@ -38,6 +38,29 @@
 	function closeSettings() {
 		showSettings = false;
 	}
+
+	let wakeLockSentinel: WakeLockSentinel | null = $state(null);
+
+	$effect(() => {
+		if (prefs.keepScreenOn) {
+			let cancelled = false;
+			navigator.wakeLock.request('screen').then((s) => {
+				if (cancelled) { s.release(); return; }
+				s.addEventListener('release', () => { wakeLockSentinel = null; });
+				wakeLockSentinel = s;
+			}).catch(() => { wakeLockSentinel = null; });
+			return () => {
+				cancelled = true;
+				if (wakeLockSentinel) {
+					wakeLockSentinel.release();
+					wakeLockSentinel = null;
+				}
+			};
+		} else if (wakeLockSentinel) {
+			wakeLockSentinel.release();
+			wakeLockSentinel = null;
+		}
+	});
 </script>
 
 <div

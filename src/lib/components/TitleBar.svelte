@@ -4,37 +4,6 @@ import { m } from '$lib/paraglide/messages.js';
 import { getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
 import { goto } from '$app/navigation';
 
-let wakeLockSentinel: WakeLockSentinel | null = $state(null);
-let wakeLockSupported = $state('wakeLock' in navigator);
-
-async function requestWakeLock() {
-	if (!wakeLockSupported) return;
-	try {
-		const sentinel = await navigator.wakeLock.request('screen');
-		sentinel.addEventListener('release', () => {
-			wakeLockSentinel = null;
-		});
-		wakeLockSentinel = sentinel;
-	} catch {
-		wakeLockSentinel = null;
-	}
-}
-
-function releaseWakeLock() {
-	if (wakeLockSentinel) {
-		wakeLockSentinel.release();
-		wakeLockSentinel = null;
-	}
-}
-
-function toggleWakeLock() {
-	if (wakeLockSentinel) {
-		releaseWakeLock();
-	} else {
-		requestWakeLock();
-	}
-}
-
 	let {
 		onOpenSettings,
 		onToggleFullscreen
@@ -90,20 +59,6 @@ function toggleWakeLock() {
 	class="pointer-events-none absolute top-0 right-0 left-0 z-20 flex items-start justify-between px-3 py-2"
 >
 	<div class="pointer-events-auto flex items-center gap-1">
-		<button
-			onclick={toggleWakeLock}
-			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
-			class:opacity-100={!!wakeLockSentinel}
-			class:text-[#ffd700]={!!wakeLockSentinel}
-			aria-label={wakeLockSentinel ? m.screenWillStayOn() : m.keepScreenOn()}
-			title={wakeLockSentinel ? m.screenWillStayOn() : m.keepScreenOn()}
-			data-umami-event="toggle-wakelock"
-		>
-			<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<circle cx="12" cy="12" r="5" />
-				<path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-			</svg>
-		</button>
 		<button
 			onclick={onOpenSettings}
 			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"

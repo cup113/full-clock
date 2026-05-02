@@ -9,6 +9,7 @@ export interface Preferences {
 	progressOpacity: number;
 	titleStyle: 'date' | 'custom' | 'off';
 	titleCustomized: string;
+	keepScreenOn: boolean;
 }
 
 export const defaults: Preferences = {
@@ -19,7 +20,8 @@ export const defaults: Preferences = {
 	colorProgress: '#005500',
 	progressOpacity: 20,
 	titleStyle: 'date',
-	titleCustomized: ''
+	titleCustomized: '',
+	keepScreenOn: false
 };
 
 function load(): Preferences {

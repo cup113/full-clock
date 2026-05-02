@@ -51,5 +51,7 @@
 	"faviconCredit": "Freepik",
 	"keepScreenOn": "Keep screen on",
 	"screenWillStayOn": "Screen will stay on",
-	"aboutTimeApi": "Time calibration API"
+	"aboutTimeApi": "Time calibration API",
+	"timeSyncRecalibrate": "Re-calibrate",
+	"timeSyncImprecise": "Network latency is high, result may be inaccurate. Consider re-calibrating."
 }

@@ -154,6 +154,16 @@
 					{/if}
 				</section>
 
+				<!-- Keep Screen On -->
+				<section>
+					<h3 class="mb-2 text-sm font-medium opacity-80">{m.keepScreenOn()}</h3>
+					<p class="mb-2 text-xs opacity-50">{m.screenWillStayOn()}</p>
+					<label class="relative inline-flex cursor-pointer items-center">
+						<input type="checkbox" bind:checked={prefs.keepScreenOn} class="peer sr-only" />
+						<span class="h-5 w-9 rounded-full bg-gray-600 transition-colors peer-checked:bg-blue-600 after:absolute after:top-0.5 after:left-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-4"></span>
+					</label>
+				</section>
+
 				<!-- Title Style -->
 				<section>
 					<h3 class="mb-2 text-sm font-medium opacity-80">{m.titleStyle()}</h3>
@@ -271,11 +281,20 @@
 										error: syncResult.errorMargin.toFixed(0)
 									})}
 						</p>
-						<button
-							class="cursor-pointer rounded-md border-none bg-blue-600 px-5 py-2 text-xs text-gray-200 transition-colors hover:bg-blue-700"
-							onclick={handleApply}
-							data-umami-event="apply-time-sync">{m.timeSyncApply()}</button
-						>
+						{#if syncResult.errorMargin > 1000}
+							<p class="mb-2 text-xs text-yellow-400">{m.timeSyncImprecise()}</p>
+							<button
+								class="cursor-pointer rounded-md border border-yellow-600 bg-yellow-600/20 px-5 py-2 text-xs text-yellow-400 transition-colors hover:bg-yellow-600/30"
+								onclick={autoSync}
+								data-umami-event="recalibrate-time-sync">{m.timeSyncRecalibrate()}</button
+							>
+						{:else}
+							<button
+								class="cursor-pointer rounded-md border-none bg-blue-600 px-5 py-2 text-xs text-gray-200 transition-colors hover:bg-blue-700"
+								onclick={handleApply}
+								data-umami-event="apply-time-sync">{m.timeSyncApply()}</button
+							>
+						{/if}
 					{:else if syncStatus === 'applied'}
 						<p class="mb-2 text-xs opacity-70">
 							{m.timeSyncDone()} ({m.timeSyncError()}: &plusmn;{getSyncErrorMargin().toFixed(0)}ms)
