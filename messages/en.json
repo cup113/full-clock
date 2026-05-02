@@ -33,6 +33,7 @@
 	"timeSyncSlower": "Local time is slower by {offset}ms (\u00b1{error}ms)",
 	"language": "Language",
 	"siteTitle": "Full Clock",
+	"siteDescription": "Full Clock — A clean, full-screen clock with no ads. Fully customizable colors, fonts, and display modes. Features time sync calibration for accurate timekeeping.",
 	"save": "Save",
 	"close": "Close",
 	"about": "About",
