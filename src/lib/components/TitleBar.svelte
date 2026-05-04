@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { prefs } from '../preferences.svelte';
-import { m } from '$lib/paraglide/messages.js';
-import { getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
-import { goto } from '$app/navigation';
+	import { m } from '$lib/paraglide/messages.js';
+	import { getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
+	import { goto } from '$app/navigation';
+	import { formatDate } from '../title-bar';
 
 	let {
 		onOpenSettings,
@@ -13,18 +14,7 @@ import { goto } from '$app/navigation';
 
 	$effect(() => {
 		const update = () => {
-			const d = new Date();
-			if (getLocale() === 'zh') {
-				const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-				dateStr = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${weekdays[d.getDay()]}`;
-			} else {
-				dateStr = d.toLocaleDateString('en', {
-					weekday: 'long',
-					year: 'numeric',
-					month: 'long',
-					day: 'numeric'
-				});
-			}
+			dateStr = formatDate(new Date(), getLocale());
 		};
 		update();
 		const interval = setInterval(update, 60000);
