@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.0.0] - 2026-05-07
+
+### Added
+
+- 增加 Vitest 单元测试，提取纯函数提高可测试性
+- 增加 SEO meta 标签和站点描述（国际化）
+
+### Changed
+
+- 移至 1.0.0 正式版
+
+## [0.2.1] - 2025-05-03
+
+### Added
+
+- 将屏幕常亮（Wake Lock）移至设置面板
+
+### Changed
+
+- 改进时间同步的用户体验
+
+### Fixed
+
+- 替换弃用的 Apple meta 标签
+- 添加 locale 预渲染条目
+- 单 bundle 输出、Workbox navigateFallback 配置
+
 ## [0.2.0] - 2025-05-02
 
 ### Added
@@ -76,3 +103,5 @@ and this project adheres to [Semantic Versioning].
 [0.1.1]: https://github.com/cup113/full-clock/compare/v0.1.0..v0.1.1
 [0.2.0]: https://github.com/cup113/full-clock/compare/v0.1.2..v0.2.0
 [0.1.2]: https://github.com/cup113/full-clock/compare/v0.1.1..v0.1.2
+[0.2.1]: https://github.com/cup113/full-clock/compare/v0.2.0..v0.2.1
+[1.0.0]: https://github.com/cup113/full-clock/compare/v0.2.1..v1.0.0
