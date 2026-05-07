@@ -1,6 +1,22 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages.js';
 	import { localizeHref } from '$lib/paraglide/runtime.js';
+
+	$effect(() => {
+		function onKey(e: KeyboardEvent) {
+			if (e.key === 'Escape') {
+				window.location.href = localizeHref('/');
+			}
+		}
+		window.addEventListener('keydown', onKey);
+		return () => window.removeEventListener('keydown', onKey);
+	});
+
+	function handleBackdrop(e: Event) {
+		if (e.target === e.currentTarget) {
+			window.location.href = localizeHref('/');
+		}
+	}
 </script>
 
 <svelte:head>
@@ -8,8 +24,19 @@
 </svelte:head>
 
 <div
-	class="fixed inset-0 flex items-center justify-center overflow-y-auto bg-[#004400] font-[Arial,等线,sans-serif] text-white"
+	class="fixed inset-0 flex items-center justify-center overflow-y-auto bg-[#004400] text-white"
+	onclick={handleBackdrop}
+	onkeydown={(e) => { if (e.key === 'Enter') handleBackdrop(e); }}
+	role="presentation"
 >
+	<a
+		href={localizeHref('/')}
+		class="absolute top-4 left-4 flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm text-white/70 no-underline transition-colors hover:bg-white/10 hover:text-white"
+		data-umami-event="back-from-about"
+	>
+		← {m.backToHome()}
+	</a>
+
 	<div class="max-w-lg px-8 py-10 text-center">
 		<h1 class="m-0 mb-8 text-2xl font-bold">{m.aboutTitle()}</h1>
 

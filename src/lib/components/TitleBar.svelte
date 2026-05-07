@@ -22,6 +22,8 @@
 	});
 
 	let isFullscreen = $state(false);
+	let controlsVisible = $state(true);
+	let hideTimeout: ReturnType<typeof setTimeout> | undefined;
 
 	$effect(() => {
 		const handler = () => {
@@ -31,24 +33,42 @@
 		return () => document.removeEventListener('fullscreenchange', handler);
 	});
 
+	$effect(() => {
+		if (isFullscreen) {
+			const show = () => {
+				controlsVisible = true;
+				clearTimeout(hideTimeout);
+				hideTimeout = setTimeout(() => {
+					controlsVisible = false;
+				}, 3000);
+			};
+			show();
+			window.addEventListener('mousemove', show);
+			window.addEventListener('touchstart', show);
+			return () => {
+				clearTimeout(hideTimeout);
+				window.removeEventListener('mousemove', show);
+				window.removeEventListener('touchstart', show);
+			};
+		} else {
+			controlsVisible = true;
+			clearTimeout(hideTimeout);
+		}
+	});
+
 	function handleLang(lang: 'en' | 'zh') {
 		setLocale(lang);
-		if (lang === 'en') {
-			localStorage.setItem('FL_locale_choice', 'en');
-		} else {
-			localStorage.removeItem('FL_locale_choice');
-		}
-	}
-
-	function handleAbout() {
-		goto(localizeHref('/about'));
 	}
 </script>
 
 <div
 	class="pointer-events-none absolute top-0 right-0 left-0 z-20 flex items-start justify-between px-3 py-2"
 >
-	<div class="pointer-events-auto flex items-center gap-1">
+	<div
+		class="pointer-events-auto flex items-center gap-1 transition-all duration-500"
+		class:opacity-0={!controlsVisible && isFullscreen}
+		class:pointer-events-none={!controlsVisible && isFullscreen}
+	>
 		<button
 			onclick={onOpenSettings}
 			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
@@ -73,7 +93,7 @@
 			</svg>
 		</button>
 		<button
-			onclick={handleAbout}
+			onclick={() => goto(localizeHref('/about'))}
 			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
 			aria-label={m.about()}
 			title={m.about()}
@@ -105,23 +125,29 @@
 	</div>
 
 	<div class="pointer-events-auto flex items-center gap-0.5">
-		<button
-			onclick={() => handleLang('zh')}
-			class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-inherit text-sm font-bold transition-all duration-200 hover:bg-white/10"
-			class:opacity-40={getLocale() !== 'zh'}
-			class:opacity-100={getLocale() === 'zh'}
-			title="中文"
-			data-umami-event="switch-lang-zh"
-		>中</button>
-		<button
-			onclick={() => handleLang('en')}
-			class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-inherit text-sm font-bold transition-all duration-200 hover:bg-white/10"
-			class:opacity-40={getLocale() !== 'en'}
-			class:opacity-100={getLocale() === 'en'}
-			title="English"
-			data-umami-event="switch-lang-en"
-		>EN</button>
-		<div class="mx-1 h-5 w-px bg-white/20"></div>
+		<div
+			class="flex items-center gap-0.5 transition-all duration-500"
+			class:opacity-0={!controlsVisible && isFullscreen}
+			class:pointer-events-none={!controlsVisible && isFullscreen}
+		>
+			<button
+				onclick={() => handleLang('zh')}
+				class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-inherit text-sm font-bold transition-all duration-200 hover:bg-white/10"
+				class:opacity-40={getLocale() !== 'zh'}
+				class:opacity-100={getLocale() === 'zh'}
+				title="中文"
+				data-umami-event="switch-lang-zh"
+			>中</button>
+			<button
+				onclick={() => handleLang('en')}
+				class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-inherit text-sm font-bold transition-all duration-200 hover:bg-white/10"
+				class:opacity-40={getLocale() !== 'en'}
+				class:opacity-100={getLocale() === 'en'}
+				title="English"
+				data-umami-event="switch-lang-en"
+			>EN</button>
+			<div class="mx-1 h-5 w-px bg-white/20"></div>
+		</div>
 		<button
 			onclick={onToggleFullscreen}
 			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-80 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
