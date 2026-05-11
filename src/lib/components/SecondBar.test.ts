@@ -16,16 +16,26 @@ afterEach(() => {
 });
 
 describe('SecondBar', () => {
-	it('renders fullscreen bar when secondStyle is fullscreen-bar', () => {
-		prefs.secondStyle = 'fullscreen-bar';
+	it('renders fullscreen bar when secondStyle is bar with fullscreen position', () => {
+		prefs.secondStyle = 'bar';
+		prefs.barPosition = 'fullscreen';
 		const { container } = render(SecondBar);
 		expect(container.querySelector('.h-full')).toBeInTheDocument();
 	});
 
-	it('renders top bar when secondStyle is top-bar', () => {
-		prefs.secondStyle = 'top-bar';
+	it('renders top bar when secondStyle is bar with top position', () => {
+		prefs.secondStyle = 'bar';
+		prefs.barPosition = 'top';
 		const { container } = render(SecondBar);
 		expect(container.querySelector('.h-12')).toBeInTheDocument();
+	});
+
+	it('renders bottom bar when secondStyle is bar with bottom position', () => {
+		prefs.secondStyle = 'bar';
+		prefs.barPosition = 'bottom';
+		const { container } = render(SecondBar);
+		const bar = container.querySelector('.bottom-0');
+		expect(bar).toBeInTheDocument();
 	});
 
 	it('does not render bar when secondStyle is off', () => {
@@ -43,7 +53,8 @@ describe('SecondBar', () => {
 	});
 
 	it('calculates correct width percentage', () => {
-		prefs.secondStyle = 'fullscreen-bar';
+		prefs.secondStyle = 'bar';
+		prefs.barPosition = 'fullscreen';
 		const { container } = render(SecondBar);
 		const bar = container.querySelector('.h-full') as HTMLElement;
 		expect(bar).toHaveStyle('width: 75%');

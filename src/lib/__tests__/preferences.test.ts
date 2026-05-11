@@ -34,12 +34,18 @@ describe('save', () => {
 	});
 
 	it('persists all default preference fields', () => {
-		save(defaults);
+		const customPrefs = { ...defaults, background: '#ff0000', foreground: '#00ff00' };
+
+		save(customPrefs);
 
 		const call = vi.mocked(localStorage.setItem).mock.lastCall;
 		expect(call?.[0]).toBe('FL_preferences');
 		const stored = JSON.parse(call?.[1] as string);
-		expect(stored).toEqual(defaults);
+		expect(stored.background).toBe('#ff0000');
+		expect(stored.foreground).toBe('#00ff00');
+		expect(stored.timeFormat).toBe('24h');
+		expect(stored.secondStyle).toBe('bar');
+		expect(stored.barPosition).toBe('fullscreen');
 	});
 });
 
@@ -73,5 +79,21 @@ describe('load', () => {
 
 		const result = load();
 		expect(result).toEqual(defaults);
+	});
+
+	it('migrates old fullscreen-bar to bar + barPosition fullscreen', () => {
+		localStorage.setItem('FL_preferences', JSON.stringify({ secondStyle: 'fullscreen-bar' }));
+
+		const result = load();
+		expect(result.secondStyle).toBe('bar');
+		expect(result.barPosition).toBe('fullscreen');
+	});
+
+	it('migrates old top-bar to bar + barPosition top', () => {
+		localStorage.setItem('FL_preferences', JSON.stringify({ secondStyle: 'top-bar' }));
+
+		const result = load();
+		expect(result.secondStyle).toBe('bar');
+		expect(result.barPosition).toBe('top');
 	});
 });

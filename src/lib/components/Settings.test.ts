@@ -57,11 +57,11 @@ describe('Settings', () => {
 		vi.unstubAllGlobals();
 	});
 
-	it('second style radio updates preferences', async () => {
+	it('second style button updates preferences', async () => {
 		render(Settings, { open: true, onClose: () => {} });
 
-		const digitalRadio = screen.getByRole('radio', { name: 'secondStyle_digital' });
-		await fireEvent.click(digitalRadio);
+		const digitalBtn = screen.getByText('secondStyle_digital');
+		await fireEvent.click(digitalBtn);
 
 		expect(prefs.secondStyle).toBe('digital');
 	});

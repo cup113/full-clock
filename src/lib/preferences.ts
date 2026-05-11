@@ -4,9 +4,11 @@ export interface Preferences {
 	background: string;
 	foreground: string;
 	fontFamily: string;
-	secondStyle: 'fullscreen-bar' | 'top-bar' | 'digital' | 'off';
+	secondStyle: 'bar' | 'digital' | 'off';
+	barPosition: 'fullscreen' | 'top' | 'bottom';
 	colorProgress: string;
 	progressOpacity: number;
+	timeFormat: '12h' | '24h';
 	titleStyle: 'date' | 'custom' | 'off';
 	titleCustomized: string;
 	keepScreenOn: boolean;
@@ -15,13 +17,15 @@ export interface Preferences {
 export const defaults: Preferences = {
 	background: '#004400',
 	foreground: '#FFFFFF',
-	fontFamily: 'Arial, 等线, sans-serif',
-	secondStyle: 'fullscreen-bar',
+	fontFamily: 'Arial',
+	secondStyle: 'bar',
+	barPosition: 'fullscreen',
 	colorProgress: '#005500',
 	progressOpacity: 20,
+	timeFormat: '24h',
 	titleStyle: 'date',
 	titleCustomized: '',
-	keepScreenOn: false
+	keepScreenOn: false,
 };
 
 export function load(): Preferences {
@@ -30,7 +34,15 @@ export function load(): Preferences {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		if (raw) {
 			const parsed = JSON.parse(raw);
-			return { ...defaults, ...parsed };
+			const migrated = { ...defaults, ...parsed };
+			if (parsed.secondStyle === 'fullscreen-bar') {
+				migrated.secondStyle = 'bar';
+				migrated.barPosition = 'fullscreen';
+			} else if (parsed.secondStyle === 'top-bar') {
+				migrated.secondStyle = 'bar';
+				migrated.barPosition = 'top';
+			}
+			return migrated;
 		}
 	} catch {
 		/* ignore */

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { VERSION } from '$lib/version';
 	import { m } from '$lib/paraglide/messages.js';
 	import { localizeHref } from '$lib/paraglide/runtime.js';
 
@@ -54,6 +55,8 @@
 				<p class="m-0 text-sm leading-relaxed opacity-80">{m.aboutFeature3Desc()}</p>
 			</div>
 		</div>
+
+		<p class="mb-4 text-xs text-white/40">v{VERSION}</p>
 
 		<div class="mb-8 space-y-1 text-xs opacity-70">
 			<p class="m-0">

@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.1.0] - 2026-05-11
+
+### Added
+
+- 主时钟 AM/PM + 数字秒采用纵向右对齐布局，对齐视觉优化
+- 网络时间同步误差 <500ms 自动应用，体验简化
+- 字体切换自动重算大小，12h 模式缩放算法修正
+- 设置界面增加版本号显示
+- ResizeObserver 防抖 200ms + 字体过渡动画
+- Settings Preview 固定时间 19:02:34，放大预览尺寸
+- Settings Preview 进度条模拟三种真实定位
+- README/AGENTS 文档更新
+
+### Changed
+
+- 移除 Second Font Size 配置（尚未发布，无需迁移）
+- Bar 位置/透明度子配置改为始终纵向
+
+### Fixed
+
+- 取消 300ms 精度阈值，统一为 500ms
+
 ## [1.0.2] - 2026-05-07
 
 ### Changed

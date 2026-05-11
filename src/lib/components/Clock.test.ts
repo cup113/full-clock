@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
-import { resetPrefs } from '../preferences.svelte';
+import { resetPrefs, prefs } from '../preferences.svelte';
 import { removeSync } from '../time.svelte';
 import Clock from './Clock.svelte';
 
@@ -16,9 +16,16 @@ afterEach(() => {
 });
 
 describe('Clock', () => {
-	it('renders time in HH:MM format', () => {
+	it('renders time in HH:MM format (24h default)', () => {
 		render(Clock, { secondStyle: 'off' });
 		expect(screen.getByText('14:30')).toBeInTheDocument();
+	});
+
+	it('renders time in 12h format when set', () => {
+		prefs.timeFormat = '12h';
+		render(Clock, { secondStyle: 'off' });
+		expect(screen.getByText('02:30')).toBeInTheDocument();
+		expect(screen.getByText('PM')).toBeInTheDocument();
 	});
 
 	it('shows digital seconds when secondStyle is digital', () => {
@@ -27,14 +34,14 @@ describe('Clock', () => {
 	});
 
 	it('does not show seconds when secondStyle is not digital', () => {
-		render(Clock, { secondStyle: 'fullscreen-bar' });
+		render(Clock, { secondStyle: 'bar' });
 		expect(screen.queryByText(':45')).not.toBeInTheDocument();
 	});
 
 	it('applies font-family from prefs', () => {
 		const { container } = render(Clock, { secondStyle: 'off' });
 		const innerDiv = container.querySelector('[style*="font-family"]');
-		expect(innerDiv).toHaveStyle('font-family: Arial, 等线, sans-serif');
+		expect(innerDiv).toHaveStyle('font-family: Arial');
 	});
 
 	it('applies foreground color from prefs', () => {
