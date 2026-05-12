@@ -6,7 +6,7 @@
 
 由于 Svelte 工具有命令行难以中止的问题，检查诊断时请用：`pnpm svelte-kit sync; pnpm svelte-check --tsconfig ./tsconfig.json`
 
-当前版本：v1.1.1
+当前版本：v1.2.0
 
 ## 架构决策
 
