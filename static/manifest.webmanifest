@@ -1,0 +1,17 @@
+{
+	"name": "Full Clock",
+	"short_name": "Full Clock",
+	"description": "Clean, Full-Screen Clock",
+	"theme_color": "#004400",
+	"background_color": "#004400",
+	"display": "standalone",
+	"start_url": "/",
+	"icons": [
+		{
+			"src": "favicon.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		}
+	]
+}

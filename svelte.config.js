@@ -13,7 +13,7 @@ const config = {
 			entries: ['/', '/about', '/zh/', '/en/', '/zh/about', '/en/about']
 		},
 		output: {
-			bundleStrategy: 'single'
+			// no bundleStrategy — let SvelteKit split by route
 		}
 	}
 };

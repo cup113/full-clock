@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.1.1] - 2026-05-12
+
+### Changed
+
+- 移除 `vite-plugin-pwa` 依赖，改用 SvelteKit 原生 `$service-worker` 模块
+- 移除 `bundleStrategy: 'single'`，改为默认按路由拆包
+- 静态 `manifest.webmanifest` 移至 `static/` 目录
+
+### Added
+
+- `src/service-worker.ts`：自定义 SW，利用 `$service-worker` 的 `prerendered` 数组缓存所有预渲染 HTML
+- `app.html` 内联语言检测脚本（零闪烁，尊重 `PARAGLIDE_LOCALE` cookie）
+- PWA 更新提示按钮（用户确认后才激活新 SW）
+
+### Fixed
+
+- 修复 `non-precached-url` 缓存报错
+- 修复新构建后 PWA 首屏加载缓慢的问题
+- 修复中文用户首次访问时先显示英文再切换的闪烁问题
+
 ## [1.1.0] - 2026-05-11
 
 ### Added

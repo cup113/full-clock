@@ -9,11 +9,14 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<link rel="apple-touch-icon" href="/favicon.png" />
 		<script>
-			if ('serviceWorker' in navigator) {
-				window.addEventListener('load', () => {
-					navigator.serviceWorker.register('/sw.js', { scope: '/' });
-				});
-			}
+			(function() {
+				if (document.cookie.indexOf('PARAGLIDE_LOCALE=') !== -1) return;
+				if (navigator.languages && !location.pathname.match(/^\/(zh|en)(\/|$)/)) {
+					if (navigator.languages.some(function(l) { return l.startsWith('zh'); })) {
+						location.replace('/zh/');
+					}
+				}
+			})();
 		</script>
 		<style>
 			html,
