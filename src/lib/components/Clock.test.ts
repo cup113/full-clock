@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import { resetPrefs, prefs } from '../preferences.svelte';
 import { removeSync } from '../time.svelte';
+import { resetTick } from '../tick.svelte';
 import Clock from './Clock.svelte';
 
 beforeEach(() => {
@@ -9,6 +10,7 @@ beforeEach(() => {
 	removeSync();
 	vi.useFakeTimers();
 	vi.setSystemTime(new Date(2026, 4, 7, 14, 30, 45));
+	resetTick();
 });
 
 afterEach(() => {

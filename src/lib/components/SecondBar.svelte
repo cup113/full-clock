@@ -1,17 +1,10 @@
 <script lang="ts">
 	import { prefs } from '../preferences.svelte';
-	import { getSyncedOffset, isSyncApplied } from '../time.svelte';
+	import { useTick, getNow } from '../tick.svelte';
 
-	let now = $state(Date.now());
+	useTick();
 
-	$effect(() => {
-		const interval = setInterval(() => {
-			now = Date.now();
-		}, 100);
-		return () => clearInterval(interval);
-	});
-
-	let adjusted = $derived(isSyncApplied() ? now + getSyncedOffset() : now);
+	let adjusted = $derived(getNow());
 	let seconds = $derived(new Date(adjusted).getSeconds());
 	let pct = $derived((seconds / 60) * 100);
 </script>
