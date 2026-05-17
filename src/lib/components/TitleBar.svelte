@@ -12,6 +12,12 @@
 
 	let dateStr = $state('');
 
+	let displayTitle = $derived(
+		prefs.titleStyle === 'date' ? dateStr :
+		prefs.titleStyle === 'custom' && prefs.titleCustomized ? prefs.titleCustomized :
+		''
+	);
+
 	$effect(() => {
 		const update = () => {
 			dateStr = formatDate(new Date(), getLocale());
@@ -117,10 +123,8 @@
 	</div>
 
 	<div class="pointer-events-auto flex-1 px-3 text-center">
-		{#if prefs.titleStyle === 'date'}
-			<span class="text-2xl font-bold opacity-80">{dateStr}</span>
-		{:else if prefs.titleStyle === 'custom' && prefs.titleCustomized}
-			<span class="text-2xl font-bold opacity-80">{prefs.titleCustomized}</span>
+		{#if displayTitle}
+			<span class="text-3xl font-bold opacity-80">{displayTitle}</span>
 		{/if}
 	</div>
 
