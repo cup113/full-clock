@@ -1,7 +1,7 @@
 {
 	"name": "full-clock",
 	"private": true,
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -26,6 +26,7 @@
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/svelte": "^5.3.1",
 		"@types/node": "^24",
+		"@vitest/coverage-v8": "^4.1.5",
 		"eslint": "^10.2.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.17.0",
@@ -40,6 +41,6 @@
 		"typescript": "^6.0.2",
 		"typescript-eslint": "^8.58.1",
 		"vite": "^8.0.7",
-		"vitest": "^4.1.5"
+		"vitest": "^4.1.7"
 	}
 }
