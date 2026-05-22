@@ -19,6 +19,12 @@ export default defineConfig({
 			deps: {
 				inline: ['svelte']
 			}
+		},
+		coverage: {
+			provider: 'v8',
+			reporter: ['text', 'lcov', 'html'],
+			include: ['src/lib/**'],
+			exclude: ['src/lib/paraglide/**']
 		}
 	}
 });
