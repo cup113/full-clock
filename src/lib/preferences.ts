@@ -12,6 +12,7 @@ export interface Preferences {
 	titleStyle: 'date' | 'custom' | 'off';
 	titleCustomized: string;
 	keepScreenOn: boolean;
+	locale: string | null;
 }
 
 export const defaults: Preferences = {
@@ -26,6 +27,7 @@ export const defaults: Preferences = {
 	titleStyle: 'date',
 	titleCustomized: '',
 	keepScreenOn: false,
+	locale: null,
 };
 
 export function load(): Preferences {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { prefs, save, defaults } from '../preferences.svelte';
+	import { prefs, save, saveNow, defaults } from '../preferences.svelte';
 	import { VERSION } from '$lib/version';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
@@ -61,6 +61,8 @@
 	}
 
 	function handleLangChange(lang: 'en' | 'zh') {
+		prefs.locale = lang;
+		saveNow(prefs);
 		setLocale(lang);
 	}
 

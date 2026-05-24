@@ -37,7 +37,7 @@ describe('ColorConfig', () => {
 	it('clicking detail toggle expands color pickers', async () => {
 		const { container } = render(ColorConfig);
 		const toggleBtn = container.querySelector('section > button')!;
-		toggleBtn.click();
+		fireEvent.click(toggleBtn);
 		await vi.waitFor(() => {
 			expect(screen.getByText('#004400')).toBeInTheDocument();
 		});
@@ -46,11 +46,11 @@ describe('ColorConfig', () => {
 	it('clicking detail toggle again collapses color pickers', async () => {
 		const { container } = render(ColorConfig);
 		const toggleBtn = container.querySelector('section > button')!;
-		toggleBtn.click();
+		fireEvent.click(toggleBtn);
 		await vi.waitFor(() => {
 			expect(screen.getByText('#004400')).toBeInTheDocument();
 		});
-		toggleBtn.click();
+		fireEvent.click(toggleBtn);
 		await vi.waitFor(() => {
 			expect(screen.queryByText('#004400')).not.toBeInTheDocument();
 		});
@@ -62,7 +62,7 @@ describe('ColorConfig', () => {
 		prefs.colorProgress = '#0000ff';
 		const { container } = render(ColorConfig);
 		const toggleBtn = container.querySelector('section > button')!;
-		toggleBtn.click();
+		fireEvent.click(toggleBtn);
 		await vi.waitFor(() => {
 			expect(screen.getByText('#ff0000')).toBeInTheDocument();
 		});
@@ -101,5 +101,45 @@ describe('ColorConfig', () => {
 		prefs.secondStyle = 'digital';
 		render(ColorConfig);
 		expect(screen.getByText(':34')).toBeInTheDocument();
+	});
+
+	it('preview shows top bar overlay when barPosition is top', () => {
+		prefs.secondStyle = 'bar';
+		prefs.barPosition = 'top';
+		const { container } = render(ColorConfig);
+		const bar = container.querySelector('[style*="56.666"]');
+		expect(bar).toBeInTheDocument();
+		expect(bar?.classList.contains('bottom-0')).toBe(false);
+	});
+
+	it('preview shows bottom bar overlay when barPosition is bottom', () => {
+		prefs.secondStyle = 'bar';
+		prefs.barPosition = 'bottom';
+		const { container } = render(ColorConfig);
+		const bar = container.querySelector('[style*="56.666"]');
+		expect(bar).toBeInTheDocument();
+		expect(bar?.classList.contains('top-0')).toBe(false);
+	});
+
+	it('preview does not show AM/PM when secondStyle is digital in 24h mode', () => {
+		prefs.secondStyle = 'digital';
+		prefs.timeFormat = '24h';
+		render(ColorConfig);
+		expect(screen.getByText(':34')).toBeInTheDocument();
+		expect(screen.queryByText('PM')).not.toBeInTheDocument();
+	});
+
+	it('preview shows AM/PM when secondStyle is off and format is 12h', () => {
+		prefs.secondStyle = 'off';
+		prefs.timeFormat = '12h';
+		render(ColorConfig);
+		expect(screen.getByText('PM')).toBeInTheDocument();
+	});
+
+	it('does not show bar overlay when secondStyle is not bar', () => {
+		prefs.secondStyle = 'off';
+		const { container } = render(ColorConfig);
+		const bar = container.querySelector('[style*="56.666"]');
+		expect(bar).toBeNull();
 	});
 });

@@ -59,4 +59,47 @@ describe('TitleBar', () => {
 		expect(screen.getByText('EN')).toBeInTheDocument();
 		expect(screen.getByText('中')).toBeInTheDocument();
 	});
+
+	it('does not display title when titleStyle is custom with empty text', () => {
+		prefs.titleStyle = 'custom';
+		prefs.titleCustomized = '';
+		const { container } = render(TitleBar, {
+			onOpenSettings: vi.fn(),
+			onToggleFullscreen: vi.fn()
+		});
+		const titleSpans = container.querySelectorAll('.text-3xl');
+		expect(titleSpans.length).toBe(0);
+	});
+
+	it('clicking EN button updates locale', async () => {
+		render(TitleBar, { onOpenSettings: vi.fn(), onToggleFullscreen: vi.fn() });
+		await fireEvent.click(screen.getByText('EN'));
+		expect(prefs.locale).toBe('en');
+	});
+
+	it('clicking 中 button updates locale', async () => {
+		render(TitleBar, { onOpenSettings: vi.fn(), onToggleFullscreen: vi.fn() });
+		await fireEvent.click(screen.getByText('中'));
+		expect(prefs.locale).toBe('zh');
+	});
+
+	it('shows exit fullscreen icon when in fullscreen mode', async () => {
+		const fakeElement = document.createElement('div');
+		Object.defineProperty(document, 'fullscreenElement', {
+			configurable: true,
+			get: () => fakeElement
+		});
+
+		render(TitleBar, { onOpenSettings: vi.fn(), onToggleFullscreen: vi.fn() });
+		document.dispatchEvent(new Event('fullscreenchange'));
+
+		await vi.waitFor(() => {
+			expect(screen.getByLabelText('exitFullscreen')).toBeInTheDocument();
+		});
+
+		Object.defineProperty(document, 'fullscreenElement', {
+			configurable: true,
+			get: () => null
+		});
+	});
 });

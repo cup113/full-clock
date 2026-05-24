@@ -10,10 +10,34 @@
 		<link rel="apple-touch-icon" href="/favicon.png" />
 		<script>
 			(function() {
+				var path = location.pathname;
+				var onZhPath = path === '/zh' || path.startsWith('/zh/');
+				var hasLocalePrefix = path.match(/^\/(zh|en)(\/|$)/);
+
+				// 1. Check localStorage for explicit locale preference (PWA-persistent)
+				try {
+					var prefsRaw = localStorage.getItem('FL_preferences');
+					if (prefsRaw) {
+						var p = JSON.parse(prefsRaw);
+						if (p.locale === 'zh' && !onZhPath) {
+							location.replace('/zh');
+							return;
+						}
+						if (p.locale === 'en' && onZhPath) {
+							location.replace('/');
+							return;
+						}
+						if (p.locale === 'en' || p.locale === 'zh') {
+							return;
+						}
+					}
+				} catch(e) {}
+
+				// 2. Fallback: browser language auto-detection (first visit, no saved preference)
 				if (document.cookie.indexOf('PARAGLIDE_LOCALE=') !== -1) return;
-				if (navigator.languages && !location.pathname.match(/^\/(zh|en)(\/|$)/)) {
+				if (navigator.languages && !hasLocalePrefix) {
 					if (navigator.languages.some(function(l) { return l.startsWith('zh'); })) {
-						location.replace('/zh/');
+						location.replace('/zh');
 					}
 				}
 			})();

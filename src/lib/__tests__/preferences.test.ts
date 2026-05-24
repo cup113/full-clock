@@ -58,11 +58,12 @@ describe('load', () => {
 	it('returns defaults when localStorage is undefined', () => {
 		const origLocalStorage = (globalThis as any).localStorage;
 		delete (globalThis as any).localStorage;
-
-		const result = load();
-
-		(globalThis as any).localStorage = origLocalStorage;
-		expect(result).toEqual(defaults);
+		try {
+			const result = load();
+			expect(result).toEqual(defaults);
+		} finally {
+			(globalThis as any).localStorage = origLocalStorage;
+		}
 	});
 
 	it('merges stored partial data with defaults', () => {
@@ -95,5 +96,17 @@ describe('load', () => {
 		const result = load();
 		expect(result.secondStyle).toBe('bar');
 		expect(result.barPosition).toBe('top');
+	});
+});
+
+describe('save edge cases', () => {
+	it('does not throw when localStorage is undefined', () => {
+		const origLocalStorage = (globalThis as any).localStorage;
+		delete (globalThis as any).localStorage;
+		try {
+			expect(() => save(defaults)).not.toThrow();
+		} finally {
+			(globalThis as any).localStorage = origLocalStorage;
+		}
 	});
 });

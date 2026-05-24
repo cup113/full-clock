@@ -65,4 +65,56 @@ describe('Settings', () => {
 
 		expect(prefs.secondStyle).toBe('digital');
 	});
+
+	it('triggers auto-sync computing state then falls back to idle on fetch failure', async () => {
+		render(Settings, { open: true, onClose: () => {} });
+		// The effect triggers autoSync → syncStatus = 'computing'
+		expect(await screen.findByText('timeSyncComputing', {}, { timeout: 3000 })).toBeInTheDocument();
+		// After fetch fails, catch sets syncStatus = 'idle', button shows timeSyncApply
+		expect(await screen.findByText('timeSyncApply', {}, { timeout: 15000 })).toBeInTheDocument();
+		expect(screen.queryByText('timeSyncComputing')).not.toBeInTheDocument();
+	});
+
+	it('shows bar position options when secondStyle is bar', () => {
+		prefs.secondStyle = 'bar';
+		render(Settings, { open: true, onClose: () => {} });
+		expect(screen.getByText('barPosition_fullscreen')).toBeInTheDocument();
+		expect(screen.getByText('barPosition_top')).toBeInTheDocument();
+		expect(screen.getByText('barPosition_bottom')).toBeInTheDocument();
+		expect(screen.getByText('progressOpacity')).toBeInTheDocument();
+	});
+
+	it('hides bar position options when secondStyle is not bar', () => {
+		prefs.secondStyle = 'off';
+		render(Settings, { open: true, onClose: () => {} });
+		expect(screen.queryByText('barPosition_fullscreen')).not.toBeInTheDocument();
+		expect(screen.queryByText('progressOpacity')).not.toBeInTheDocument();
+	});
+
+	it('shows custom title input when titleStyle is custom', () => {
+		prefs.titleStyle = 'custom';
+		render(Settings, { open: true, onClose: () => {} });
+		expect(screen.getByPlaceholderText('titleCustomized')).toBeInTheDocument();
+	});
+
+	it('hides custom title input when titleStyle is not custom', () => {
+		prefs.titleStyle = 'date';
+		render(Settings, { open: true, onClose: () => {} });
+		expect(screen.queryByPlaceholderText('titleCustomized')).not.toBeInTheDocument();
+	});
+
+	it('reset button cancels on confirm false', async () => {
+		const confirmMock = vi.fn(() => false);
+		vi.stubGlobal('confirm', confirmMock);
+
+		const origBackground = prefs.background;
+		prefs.background = '#ff0000';
+		render(Settings, { open: true, onClose: () => {} });
+
+		await fireEvent.click(screen.getByText('reset'));
+		expect(confirmMock).toHaveBeenCalledWith('resetConfirm');
+		expect(prefs.background).toBe('#ff0000');
+
+		vi.unstubAllGlobals();
+	});
 });

@@ -51,4 +51,17 @@ describe('Clock', () => {
 		const innerDiv = container.querySelector('[style*="color"]');
 		expect(innerDiv).toHaveStyle('color: #FFFFFF');
 	});
+
+	it('shows AM/PM above digital seconds when secondStyle is digital and format is 12h', () => {
+		prefs.timeFormat = '12h';
+		render(Clock, { secondStyle: 'digital' });
+		expect(screen.getByText(':45')).toBeInTheDocument();
+		expect(screen.getByText('PM')).toBeInTheDocument();
+	});
+
+	it('shows AM/PM inline when secondStyle is bar and format is 12h', () => {
+		prefs.timeFormat = '12h';
+		render(Clock, { secondStyle: 'bar' });
+		expect(screen.getByText('PM')).toBeInTheDocument();
+	});
 });

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { prefs } from '$lib/preferences.svelte';
+	import { prefs, save, saveNow } from '$lib/preferences.svelte';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import { enableWakeLock, disableWakeLock } from '$lib/wake-lock.svelte';
 	import Clock from '$lib/components/Clock.svelte';
@@ -11,11 +11,17 @@
 	let swUpdateReady = $state(false);
 
 	$effect(() => {
-		const hasLocaleCookie = document.cookie.includes('PARAGLIDE_LOCALE=');
-		if (hasLocaleCookie) return;
+		if (prefs.locale) {
+			if (prefs.locale !== getLocale()) {
+				setLocale(prefs.locale as 'en' | 'zh');
+			}
+			return;
+		}
 
 		const hasChineseLang = navigator.languages?.some((l) => l.startsWith('zh'));
 		if (hasChineseLang && getLocale() !== 'zh') {
+			prefs.locale = 'zh';
+			saveNow(prefs);
 			window.umami?.track('auto-redirect-zh');
 			setLocale('zh');
 		}
@@ -86,6 +92,10 @@
 				disableWakeLock();
 			};
 		}
+	});
+
+	$effect(() => {
+		save(prefs);
 	});
 </script>
 
