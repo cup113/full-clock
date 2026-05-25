@@ -22,9 +22,9 @@ describe('TitleBar', () => {
 		expect(onOpenSettings).toHaveBeenCalledOnce();
 	});
 
-	it('about button is present', () => {
+	it('help button is present', () => {
 		render(TitleBar, { onOpenSettings: vi.fn(), onToggleFullscreen: vi.fn() });
-		expect(screen.getByLabelText('about')).toBeInTheDocument();
+		expect(screen.getByLabelText('help')).toBeInTheDocument();
 	});
 
 	it('fullscreen button shows correct aria-label', () => {

@@ -73,8 +73,8 @@ describe('ColorConfig', () => {
 	it('font select updates prefs.fontFamily', () => {
 		render(ColorConfig);
 		const select = screen.getByRole('combobox');
-		fireEvent.change(select, { target: { value: 'Georgia' } });
-		expect(prefs.fontFamily).toBe('Georgia');
+		fireEvent.change(select, { target: { value: 'Cascadia Code' } });
+		expect(prefs.fontFamily).toBe('Cascadia Code');
 	});
 
 	it('preview shows 24h format by default', () => {

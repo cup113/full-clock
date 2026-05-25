@@ -103,9 +103,9 @@
 		<button
 			onclick={() => goto(localizeHref('/about'))}
 			class="cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-inherit opacity-60 transition-all duration-200 hover:bg-white/10 hover:opacity-100"
-			aria-label={m.about()}
-			title={m.about()}
-			data-umami-event="open-about"
+			aria-label={m.help()}
+			title={m.help()}
+			data-umami-event="open-help"
 		>
 			<svg
 				viewBox="0 0 24 24"
@@ -118,8 +118,8 @@
 				stroke-linejoin="round"
 			>
 				<circle cx="12" cy="12" r="10" />
-				<path d="M12 16v-4" />
-				<circle cx="12" cy="8" r="0.5" fill="currentColor" />
+				<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+				<path d="M12 17h.01" />
 			</svg>
 		</button>
 	</div>

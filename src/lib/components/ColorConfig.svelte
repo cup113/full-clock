@@ -9,9 +9,8 @@
 	let colorDetailExpanded = $state(false);
 
 	const commonFonts = [
-		'Arial', 'Helvetica', 'Verdana', 'Georgia', 'Times New Roman', 'sans-serif',
 		'等线', '微软雅黑', '宋体', '黑体', '楷体',
-		'Courier New', 'Consolas', 'Cascadia Code', 'monospace'
+		'Cascadia Code', 'Consolas', 'Courier New', 'Fira Code', 'JetBrains Mono', 'monospace'
 	];
 
 	const colorPresets: {
