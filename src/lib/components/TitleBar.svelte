@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { prefs, save, saveNow } from '../preferences.svelte';
+	import { prefs, saveNow } from '../preferences.svelte';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
 	import { goto } from '$app/navigation';

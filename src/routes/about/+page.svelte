@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { VERSION } from '$lib/version';
+	import { prefs } from '$lib/preferences.svelte';
 	import { m } from '$lib/paraglide/messages.js';
 	import { localizeHref } from '$lib/paraglide/runtime.js';
+	import { colorWithOpacity } from '$lib/color-utils';
 	import SecondsModeDemo from '$lib/components/SecondsModeDemo.svelte';
 
 	let faqItems = $derived([
@@ -36,7 +38,8 @@
 </svelte:head>
 
 <div
-	class="fixed inset-0 overflow-y-auto bg-[#004400] text-white"
+	class="fixed inset-0 overflow-y-auto"
+	style="background: {prefs.background}; color: {prefs.foreground}; --about-fg: {prefs.foreground}; --about-bg: {prefs.background}"
 	onclick={handleBackdrop}
 	onkeydown={(e) => { if (e.key === 'Enter') handleBackdrop(e); }}
 	role="presentation"
@@ -44,7 +47,7 @@
 	<div class="flex min-h-full items-center justify-center">
 	<a
 		href={localizeHref('/')}
-		class="absolute top-4 left-4 flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm text-white/70 no-underline transition-colors hover:bg-white/10 hover:text-white"
+		class="about-back absolute top-4 left-4 flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm no-underline"
 		data-umami-event="back-from-help"
 	>
 		← {m.backToHome()}
@@ -65,7 +68,7 @@
 			{/each}
 		</div>
 
-		<p class="mb-4 text-xs text-white/40">v{VERSION}</p>
+		<p class="mb-4 text-xs" style="color: {colorWithOpacity(prefs.foreground, 0.4)}">v{VERSION}</p>
 
 		<div class="mb-8 space-y-1 text-xs opacity-70">
 			<p class="m-0">
@@ -75,7 +78,8 @@
 					target="_blank"
 					rel="noopener"
 					data-umami-event="click-help-repo"
-					class="text-[#88bbff] no-underline hover:underline">github.com/cup113/full-clock</a
+					style="color: {prefs.foreground}"
+					class="no-underline hover:underline">github.com/cup113/full-clock</a
 				>
 			</p>
 			<p class="m-0">
@@ -85,16 +89,35 @@
 					target="_blank"
 					rel="noopener"
 					data-umami-event="click-help-feedback"
-					class="text-[#88bbff] no-underline hover:underline">f.kdocs.cn/g/iuGauWIo/</a
+					style="color: {prefs.foreground}"
+					class="no-underline hover:underline">f.kdocs.cn/g/iuGauWIo/</a
 				>
 			</p>
 		</div>
 
 		<a
 			href={localizeHref('/')}
-			class="inline-block rounded-lg border border-white/30 px-8 py-2.5 text-sm text-white no-underline transition-colors hover:bg-white/10"
+			class="about-btn inline-block rounded-lg border px-8 py-2.5 text-sm no-underline"
+			style="border-color: {colorWithOpacity(prefs.foreground, 0.3)}"
 			>{m.backToHome()}</a
 		>
 	</div>
 </div>
 </div>
+
+<style>
+	.about-back {
+		opacity: 0.7;
+		transition: opacity 0.15s, background 0.15s;
+	}
+	.about-back:hover {
+		opacity: 1;
+		background: color-mix(in srgb, var(--about-fg) 10%, var(--about-bg));
+	}
+	.about-btn {
+		transition: background 0.15s;
+	}
+	.about-btn:hover {
+		background: color-mix(in srgb, var(--about-fg) 10%, var(--about-bg));
+	}
+</style>

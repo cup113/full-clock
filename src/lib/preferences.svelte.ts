@@ -12,7 +12,7 @@ let _saveTimer: ReturnType<typeof setTimeout> | undefined;
 
 export function save(p: Preferences): void {
 	clearTimeout(_saveTimer);
-	_saveTimer = setTimeout(() => saveRaw(p), 200);
+	_saveTimer = setTimeout(() => saveRaw(p), 100);
 }
 
 export function saveNow(p: Preferences): void {

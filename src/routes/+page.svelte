@@ -86,6 +86,11 @@
 	}
 
 	$effect(() => {
+		Object.values(prefs);
+		save(prefs);
+	});
+
+	$effect(() => {
 		if (prefs.keepScreenOn) {
 			enableWakeLock();
 			return () => {
@@ -94,16 +99,13 @@
 		}
 	});
 
-	$effect(() => {
-		save(prefs);
-	});
 </script>
 
 <div
 	role="application"
 	class="fixed inset-0 select-none"
 	ondblclick={() => { if (!showSettings) toggleFullscreen(); }}
-	style="background: {prefs.background}; color: {prefs.foreground}; font-family: {prefs.fontFamily};"
+	style="background: {prefs.background}; color: {prefs.foreground}; font-family: {prefs.fontFamily}; transition: background 0.3s ease, color 0.3s ease;"
 >
 	<TitleBar onOpenSettings={openSettings} onToggleFullscreen={toggleFullscreen} />
 	<Clock secondStyle={prefs.secondStyle} />

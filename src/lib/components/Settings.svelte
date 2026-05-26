@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { prefs, save, saveNow, defaults } from '../preferences.svelte';
+	import { prefs, saveNow, defaults } from '../preferences.svelte';
 	import { VERSION } from '$lib/version';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
@@ -30,10 +30,6 @@
 				autoSync();
 			}
 		}
-	});
-
-	$effect(() => {
-		save(prefs);
 	});
 
 	async function autoSync() {
