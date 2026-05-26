@@ -78,7 +78,7 @@
 					target="_blank"
 					rel="noopener"
 					data-umami-event="click-help-repo"
-					style="color: {prefs.foreground}"
+					style="color: {colorWithOpacity(prefs.foreground, 0.8)}"
 					class="no-underline hover:underline">github.com/cup113/full-clock</a
 				>
 			</p>
@@ -89,7 +89,7 @@
 					target="_blank"
 					rel="noopener"
 					data-umami-event="click-help-feedback"
-					style="color: {prefs.foreground}"
+					style="color: {colorWithOpacity(prefs.foreground, 0.8)}"
 					class="no-underline hover:underline">f.kdocs.cn/g/iuGauWIo/</a
 				>
 			</p>

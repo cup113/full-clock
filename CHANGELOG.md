@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.2.4] - 2026-05-26
+
+### Fixed
+
+- 修复设置持久化错误
+- 关于页面链接使用主题色透明度
+
+### Changed
+
+- 升级至 1.2.4
+
 ## [1.2.3] - 2026-05-25
 
 ### Added
@@ -193,6 +204,7 @@ and this project adheres to [Semantic Versioning].
 [1.0.1]: https://github.com/cup113/full-clock/compare/v1.0.0..v1.0.1
 [1.1.1]: https://github.com/cup113/full-clock/compare/v1.1.0..v1.1.1
 [1.2.0]: https://github.com/cup113/full-clock/compare/v1.1.1..v1.2.0
+[1.2.4]: https://github.com/cup113/full-clock/compare/v1.2.3..v1.2.4
 [1.2.3]: https://github.com/cup113/full-clock/compare/v1.2.2..v1.2.3
 [1.2.2]: https://github.com/cup113/full-clock/compare/v1.2.1..v1.2.2
 [1.2.1]: https://github.com/cup113/full-clock/compare/v1.2.0..v1.2.1
