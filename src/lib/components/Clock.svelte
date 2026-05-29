@@ -50,7 +50,7 @@
 >
 	<div
 		class="inline-flex items-end leading-none tracking-wider whitespace-nowrap"
-		style="font-size: {fontSize}px; font-family: {prefs.fontFamily}; color: {prefs.foreground}; transition: font-size 0.2s ease;"
+		style="font-size: {fontSize}px; font-family: {prefs.fontFamily}; color: {prefs.foreground}; translate: 0 -1.5rem; transition: font-size 0.2s ease;"
 	>
 		<span class="font-bold">{fmt.hours}:{fmt.minutes}</span>
 		{#if secondStyle === 'digital'}

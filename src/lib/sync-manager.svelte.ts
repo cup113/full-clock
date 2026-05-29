@@ -10,12 +10,12 @@ let syncErrorMargin = $state(0);
 let lastErrorTime = $state<number | null>(null);
 
 function loadMode(): 'auto' | 'manual' | 'off' {
-	if (typeof localStorage === 'undefined') return 'auto';
+	if (typeof localStorage === 'undefined') return 'manual';
 	try {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		if (raw === 'auto' || raw === 'manual' || raw === 'off') return raw;
 	} catch { /* ignore */ }
-	return 'auto';
+	return 'manual';
 }
 
 function saveMode(m: 'auto' | 'manual' | 'off') {

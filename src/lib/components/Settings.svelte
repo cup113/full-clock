@@ -168,7 +168,7 @@
 									>
 								</div>
 							</div>
-							<div class="flex items-center gap-2 sm:ml-auto">
+							<div class="flex items-center gap-2">
 								<span class="shrink-0 text-[11px] text-white/50">{m.progressOpacity()}</span>
 								<input
 									type="range"
@@ -282,12 +282,6 @@
 {/if}
 
 <style>
-	@keyframes spin {
-		to {
-			transform: rotate(360deg);
-		}
-	}
-
 	input[type='range']::-webkit-slider-runnable-track {
 		height: 6px;
 		border-radius: 999px;

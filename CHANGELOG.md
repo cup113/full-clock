@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.3.1] - 2026-05-29
+
+### Fixed
+
+- TitleBar SyncBadge 旋转动画失效（Svelte 5 `@keyframes` 作用域与内联 style 冲突），改用 Tailwind `animate-spin`
+- 同步中 Settings 内旋转边框同样问题一并修复
+- 多余 `@keyframes spin` 定义清理
+
+### Changed
+
+- 默认同步模式从 `auto` 改为 `manual`，避免新用户首次加载时出现网络错误提示
+- About 页面时间校准说明：统一列出三个供应商（新增 timeapi.io），分行重组，RTT 概念自然引出
+- Clock 垂直偏移量 `-24px` → `-1.5rem`
+
+### Added
+
+- `sync-manager.svelte.ts` 单元测试（15 个用例，覆盖 setMode/sync/clearSync 全路径）
+
 ## [1.3.0] - 2026-05-29
 
 ### Added
@@ -231,6 +249,7 @@ and this project adheres to [Semantic Versioning].
 [1.0.1]: https://github.com/cup113/full-clock/compare/v1.0.0..v1.0.1
 [1.1.1]: https://github.com/cup113/full-clock/compare/v1.1.0..v1.1.1
 [1.2.0]: https://github.com/cup113/full-clock/compare/v1.1.1..v1.2.0
+[1.3.1]: https://github.com/cup113/full-clock/compare/v1.3.0..v1.3.1
 [1.3.0]: https://github.com/cup113/full-clock/compare/v1.2.4..v1.3.0
 [1.2.4]: https://github.com/cup113/full-clock/compare/v1.2.3..v1.2.4
 [1.2.3]: https://github.com/cup113/full-clock/compare/v1.2.2..v1.2.3

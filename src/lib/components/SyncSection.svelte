@@ -83,7 +83,7 @@
 			data-umami-event="sync-now"
 		>
 			{#if state.status === 'syncing'}
-				<span class="inline-block h-4 w-4 rounded-full border-2 border-current border-t-transparent" style="animation: spin 0.8s linear infinite"></span>
+				<span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
 				{m.timeSyncComputing()}
 			{:else}
 				{m.syncNow()}

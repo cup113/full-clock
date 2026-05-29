@@ -54,7 +54,7 @@
 	"help": "帮助",
 	"helpTitle": "帮助 & 常见问题",
 	"helpQA1Q": "校准时间的原理是什么？",
-	"helpQA1A": "应用向多个时间 API（<a href=\"https://api.shijian.online\" target=\"_blank\" rel=\"noopener\" style=\"color:#88bbff;text-decoration:none\">api.shijian.online</a> 和 worldtimeapi.org）并行发送请求，超时时间 1.5s。记录发送前的本地时间 <code>T1</code> 和收到响应后的 <code>T4</code>，计算偏移量 = 服务端时间戳 - <code>(T1+T4)/2</code>，误差范围 ≈ RTT/2。多个成功结果通过逆方差加权平均合成最优值。顶端栏实时显示同步状态（<code>✓</code> 已同步、<code>⚠</code> 失败、旋转表示校准中）。支持三种模式：自动（页面加载时同步）、手动（按需同步）、关闭。",
+	"helpQA1A": "应用通过并行请求三个时间 API（超时 1.5s）来校准时间：<br>• <a href=\"https://api.shijian.online\" target=\"_blank\" rel=\"noopener\" style=\"color:#88bbff;text-decoration:none\">api.shijian.online</a><br>• <a href=\"https://worldtimeapi.org\" target=\"_blank\" rel=\"noopener\" style=\"color:#88bbff;text-decoration:none\">worldtimeapi.org</a><br>• <a href=\"https://timeapi.io\" target=\"_blank\" rel=\"noopener\" style=\"color:#88bbff;text-decoration:none\">timeapi.io</a><br><br>对每个 API，记录发送前的本地时间 <code>T1</code> 和收到响应后的 <code>T4</code>，然后计算：<br>• 偏移量 = 服务端时间戳 − <code>(T1+T4)/2</code><br>• 误差范围 ≈ <code>(T4−T1)/2</code>（即往返时间 RTT 的一半）<br><br>多个成功结果通过逆方差加权平均合成最优值。<br><br>标题栏实时显示同步状态：<code>✓</code> 已同步、<code>⚠</code> 失败、旋转表示校准中。<br>支持三种模式：自动（页面加载时同步）、手动（按需同步）、关闭。",
 	"helpQA2Q": "秒数显示模式有什么区别？",
 	"helpQA2A": "三种模式：<br>• <strong>关闭</strong> — 隐藏秒数。<br>• <strong>数字显示</strong> — 以 <code>:34</code> 形式显示秒数。<br>• <strong>背景长条</strong> — 进度条随秒数逐渐填满（默认）。位置可选：全屏（默认）、上方、下方。",
 	"helpQA3Q": "如何自定义颜色？",

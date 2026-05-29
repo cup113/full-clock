@@ -21,7 +21,7 @@
 	>
 		<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
 			stroke-linecap="round" stroke-linejoin="round"
-			style={state.status === 'syncing' ? 'animation: spin 1s linear infinite;' : ''}
+			class:animate-spin={state.status === 'syncing'}
 		>
 			{#if state.status === 'synced'}
 				<path d="M20 6L9 17l-5-5" stroke-width="2.5" />
@@ -36,8 +36,3 @@
 	</button>
 {/if}
 
-<style>
-	@keyframes spin {
-		to { transform: rotate(360deg); }
-	}
-</style>
