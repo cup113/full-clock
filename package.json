@@ -13,12 +13,14 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test": "vitest run",
-		"test:watch": "vitest"
+		"test:watch": "vitest",
+		"test:e2e": "pnpm build && playwright test"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.4",
 		"@eslint/js": "^10.0.1",
 		"@inlang/paraglide-js": "^2.18.0",
+		"@playwright/test": "^1.60.0",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.57.0",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",

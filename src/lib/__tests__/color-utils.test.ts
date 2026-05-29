@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { panelBg, syncPrecisionColor, activeStyle } from '../color-utils';
+import { panelBg, syncPrecisionColor, activeStyle, colorWithOpacity } from '../color-utils';
 
 describe('panelBg', () => {
 	it('darkens #000000 with base tint', () => {
@@ -35,5 +35,23 @@ describe('syncPrecisionColor', () => {
 describe('activeStyle', () => {
 	it('interleaves foreground and background', () => {
 		expect(activeStyle('#ff0000', '#0000ff')).toBe('background:#ff0000;color:#0000ff;border-color:#ff0000');
+	});
+});
+
+describe('colorWithOpacity', () => {
+	it('returns rgba string for a given hex and opacity', () => {
+		expect(colorWithOpacity('#ff0000', 0.5)).toBe('rgba(255,0,0,0.5)');
+	});
+
+	it('handles #000000', () => {
+		expect(colorWithOpacity('#000000', 1)).toBe('rgba(0,0,0,1)');
+	});
+
+	it('handles #FFFFFF at 0 opacity', () => {
+		expect(colorWithOpacity('#FFFFFF', 0)).toBe('rgba(255,255,255,0)');
+	});
+
+	it('handles #004400 at 0.6', () => {
+		expect(colorWithOpacity('#004400', 0.6)).toBe('rgba(0,68,0,0.6)');
 	});
 });

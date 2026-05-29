@@ -67,12 +67,15 @@ describe('Settings', () => {
 	});
 
 	it('triggers auto-sync computing state then falls back to idle on fetch failure', async () => {
+		vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('network error'))));
+
 		render(Settings, { open: true, onClose: () => {} });
-		// The effect triggers autoSync → syncStatus = 'computing'
+
 		expect(await screen.findByText('timeSyncComputing', {}, { timeout: 3000 })).toBeInTheDocument();
-		// After fetch fails, catch sets syncStatus = 'idle', button shows timeSyncApply
 		expect(await screen.findByText('timeSyncApply', {}, { timeout: 15000 })).toBeInTheDocument();
 		expect(screen.queryByText('timeSyncComputing')).not.toBeInTheDocument();
+
+		vi.unstubAllGlobals();
 	});
 
 	it('shows bar position options when secondStyle is bar', () => {
