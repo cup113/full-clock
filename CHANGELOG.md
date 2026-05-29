@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.3.0] - 2026-05-29
+
+### Added
+
+- 并行多提供者时间同步（逆方差加权平均，1.5s 超时）
+- 三模式同步选择器（自动/手动/关闭），持久化到 localStorage
+- 标题栏同步状态图标（SyncBadge）：形状编码，无硬编码颜色
+- 字体感知的时钟缩放（Canvas measureText），新增 Arial 字体选项
+- E2E 测试：时钟数字在视口内适配
+- i18n 消息：syncSyncing, syncNow, syncIdle, syncLatest, syncFailed, syncMode_*
+
+### Changed
+
+- 时间同步重构：从 `time.svelte.ts` 提取到 `sync-manager.svelte.ts`
+- SyncSection 从属性驱动改为直接读取 sync-manager 状态
+- 移除用户确认流程：同步结果始终自动应用
+- 移除 NEGLIGIBLE_THRESHOLD 和 unreliable 概念
+- TitleBar 布局从 `absolute` 改为 `flex`，移除 `pointer-events-none` 包装
+- SyncBadge 使用 paraglide i18n 替代硬编码中文
+- AGENTS.md 补充 E2E 测试命令
+
+### Fixed
+
+- 切换自动模式时不再重复触发 sync
+- E2E 测试选择器限定到 `.flex-1` 容器，避免匹配标题栏
+- SyncSection 合并重复 import
+
 ## [1.2.4] - 2026-05-26
 
 ### Fixed
@@ -204,6 +231,7 @@ and this project adheres to [Semantic Versioning].
 [1.0.1]: https://github.com/cup113/full-clock/compare/v1.0.0..v1.0.1
 [1.1.1]: https://github.com/cup113/full-clock/compare/v1.1.0..v1.1.1
 [1.2.0]: https://github.com/cup113/full-clock/compare/v1.1.1..v1.2.0
+[1.3.0]: https://github.com/cup113/full-clock/compare/v1.2.4..v1.3.0
 [1.2.4]: https://github.com/cup113/full-clock/compare/v1.2.3..v1.2.4
 [1.2.3]: https://github.com/cup113/full-clock/compare/v1.2.2..v1.2.3
 [1.2.2]: https://github.com/cup113/full-clock/compare/v1.2.1..v1.2.2

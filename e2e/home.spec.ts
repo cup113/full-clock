@@ -22,6 +22,20 @@ test('switches to Chinese locale and updates date format', async ({ page }) => {
 	expect(locale).toBe('zh');
 });
 
+test('default font clock digits fit within viewport', async ({ page }) => {
+	const clock = page.locator('.flex-1 .font-bold');
+	await expect(clock).toBeVisible();
+
+	const box = await clock.boundingBox();
+	const vp = page.viewportSize()!;
+
+	expect(box).not.toBeNull();
+	expect(box!.x).toBeGreaterThanOrEqual(0);
+	expect(box!.x + box!.width).toBeLessThanOrEqual(vp.width);
+	expect(box!.width).toBeGreaterThan(50);
+	expect(box!.height).toBeGreaterThan(20);
+});
+
 test('switches to English locale and updates date format', async ({ page }) => {
 	await page.locator('[data-umami-event="switch-lang-zh"]').click();
 	await page.waitForTimeout(150);

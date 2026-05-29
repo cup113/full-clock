@@ -23,36 +23,47 @@ Hex color of the second progress bar, distinct from background and foreground.
 Opacity 0–100 of the second progress bar.
 
 **offset**:
-Server timestamp minus local timestamp (ms). Positive means the local clock is behind the server.
+Server timestamp minus local midpoint timestamp (ms). Positive means the local clock is behind the server.
 _Avoid_: Drift, skew
 
 **errorMargin**:
-Half of the HTTP round-trip time (ms). Measures how confident we are in the offset — smaller is better.
+Result of inverse-variance weighted average across all successful provider measurements. Measures how confident we are in the combined offset — smaller is better.
 _Avoid_: Jitter, latency
 
-**NEGLIGIBLE_THRESHOLD**:
-500 ms. If `|offset|` is below this, the sync result is auto-applied without user confirmation.
+**syncMode**:
+How time synchronization is triggered.
+_Values_: `auto` (on page load), `manual` (on demand via settings), `off` (disabled)
+
+**syncStatus**:
+Time calibration state machine. Values: `idle` → `syncing` → `synced` or `error`.
+
+**syncBadge**:
+Icon in the title bar reflecting `syncStatus`. Uses shape-only encoding (no hardcoded colors) to avoid theme conflicts.
+- `syncing`: spinning partial ring
+- `synced`: checkmark
+- `error`: warning triangle
+- `idle`: two-arrow static ring (manual mode only)
 
 **wakeLock**:
 Screen Wake Lock API state machine. Values: `inactive`, `active`, `unsupported`, `denied`.
 
-**syncStatus**:
-Time calibration state machine. Values: `idle` → `computing` → `done` or `applied`.
-
 ## Relationships
 
 - **secondStyle**=`bar` paired with **barPosition** determines where the progress bar renders (fullscreen, top, or bottom)
-- **offset** > **NEGLIGIBLE_THRESHOLD** requires user confirmation; below it, sync is auto-applied
-- **errorMargin** maps to precision color: `<500` green, `<1000` yellow, `>=1000` red
-- A sync result is **unreliable** when `2 × errorMargin > |offset|` — noise exceeds signal
+- **syncStatus** is driven by **syncManager**, which fires parallel requests with 1.5s timeout and combines results via inverse-variance weighted average
 - **wakeLock** is bound to `prefs.keepScreenOn`; enabling/disabling transitions the state
 
 ## Example dialogue
 
-> **Dev:** "When **offset** is below **NEGLIGIBLE_THRESHOLD**, do we still show the precision indicator?"
-> **Domain expert:** "No — it's auto-applied silently. The indicator only appears when the user needs to review and confirm."
+> **Dev:** "When does auto-sync run?"
+> **Domain expert:** "Only on page load. There's no periodic re-sync — the offset stays applied until the next page load or manual trigger."
+
+> **Dev:** "What does the badge show in manual mode before the first sync?"
+> **Domain expert:** "A static two-arrow ring (idle state). It means 'ready to sync' without suggesting anything is happening."
 
 ## Flagged ambiguities
 
-- "sync" was used to mean both the HTTP fetch process (`syncTime`) and the applied state (`syncStatus === 'applied'`) — resolved: `syncStatus` tracks the full state machine
+- "sync" was used to mean both the HTTP fetch process (`syncTime`) and the applied state (`syncStatus === 'synced'`) — resolved: `syncStatus` tracks the full state machine
 - "bar" could be confused with a navigation or menu bar — resolved: in this project "bar" always refers to the second progress bar
+- "NEGLIGIBLE_THRESHOLD" was removed in v1.3 — sync results are always auto-applied; user confirmation step eliminated
+- "unreliable" signal was removed — cross-validation between providers was found redundant since all query the same NTP source; inverse-variance weighting is sufficient

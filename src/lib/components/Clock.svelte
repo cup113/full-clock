@@ -19,7 +19,7 @@
 		if (!container) return;
 		const { width, height } = container.getBoundingClientRect();
 		if (width === 0 || height === 0) return;
-		fontSize = calcFontSize(width, height, secondStyle === 'digital', prefs.timeFormat === '12h');
+		fontSize = calcFontSize(width, height, secondStyle === 'digital', prefs.timeFormat === '12h', prefs.fontFamily);
 	}
 
 	$effect(() => {

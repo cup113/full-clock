@@ -2,6 +2,7 @@
 	import { prefs, save, saveNow } from '$lib/preferences.svelte';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import { enableWakeLock, disableWakeLock } from '$lib/wake-lock.svelte';
+	import { getMode, sync } from '$lib/sync-manager.svelte';
 	import Clock from '$lib/components/Clock.svelte';
 	import SecondBar from '$lib/components/SecondBar.svelte';
 	import TitleBar from '$lib/components/TitleBar.svelte';
@@ -91,6 +92,10 @@
 	});
 
 	$effect(() => {
+		if (getMode() === 'auto') sync();
+	});
+
+	$effect(() => {
 		if (prefs.keepScreenOn) {
 			enableWakeLock();
 			return () => {
@@ -103,12 +108,14 @@
 
 <div
 	role="application"
-	class="fixed inset-0 select-none"
+	class="fixed inset-0 flex flex-col select-none"
 	ondblclick={() => { if (!showSettings) toggleFullscreen(); }}
 	style="background: {prefs.background}; color: {prefs.foreground}; font-family: {prefs.fontFamily}; transition: background 0.3s ease, color 0.3s ease;"
 >
 	<TitleBar onOpenSettings={openSettings} onToggleFullscreen={toggleFullscreen} />
-	<Clock secondStyle={prefs.secondStyle} />
+	<div class="relative flex-1 min-h-0">
+		<Clock secondStyle={prefs.secondStyle} />
+	</div>
 	<SecondBar />
 	<Settings open={showSettings} onClose={closeSettings} />
 

@@ -4,6 +4,7 @@
 	import { getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
 	import { goto } from '$app/navigation';
 	import { formatDate } from '../title-bar';
+	import SyncBadge from './SyncBadge.svelte';
 
 	let {
 		onOpenSettings,
@@ -70,10 +71,10 @@
 </script>
 
 <div
-	class="pointer-events-none absolute top-0 right-0 left-0 z-20 flex items-start justify-between px-3 py-2"
+	class="shrink-0 flex items-start justify-between px-3 py-2"
 >
 	<div
-		class="pointer-events-auto flex items-center gap-1 transition-all duration-500"
+		class="flex items-center gap-1 transition-all duration-500"
 		class:opacity-0={!controlsVisible && isFullscreen}
 		class:pointer-events-none={!controlsVisible && isFullscreen}
 	>
@@ -124,13 +125,13 @@
 		</button>
 	</div>
 
-	<div class="pointer-events-auto flex-1 px-3 text-center">
+	<div class="flex-1 px-3 text-center">
 		{#if displayTitle}
 			<span class="text-3xl font-bold opacity-80">{displayTitle}</span>
 		{/if}
 	</div>
 
-	<div class="pointer-events-auto flex items-center gap-0.5">
+	<div class="flex items-center gap-0.5">
 		<div
 			class="flex items-center gap-0.5 transition-all duration-500"
 			class:opacity-0={!controlsVisible && isFullscreen}
@@ -152,6 +153,7 @@
 				title="English"
 				data-umami-event="switch-lang-en"
 			>EN</button>
+			<SyncBadge />
 			<div class="mx-1 h-5 w-px bg-white/20"></div>
 		</div>
 		<button

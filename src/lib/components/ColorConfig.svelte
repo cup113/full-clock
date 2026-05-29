@@ -10,7 +10,8 @@
 
 	const commonFonts = [
 		'等线', '微软雅黑', '宋体', '黑体', '楷体',
-		'Cascadia Code', 'Consolas', 'Courier New', 'Fira Code', 'JetBrains Mono', 'monospace'
+		'Cascadia Code', 'Consolas', 'Courier New', 'Fira Code', 'JetBrains Mono', 'monospace',
+		'Arial'
 	];
 
 	const colorPresets: {

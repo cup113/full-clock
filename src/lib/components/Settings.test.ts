@@ -66,16 +66,11 @@ describe('Settings', () => {
 		expect(prefs.secondStyle).toBe('digital');
 	});
 
-	it('triggers auto-sync computing state then falls back to idle on fetch failure', async () => {
-		vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('network error'))));
-
+	it('shows sync mode selector buttons', () => {
 		render(Settings, { open: true, onClose: () => {} });
-
-		expect(await screen.findByText('timeSyncComputing', {}, { timeout: 3000 })).toBeInTheDocument();
-		expect(await screen.findByText('timeSyncApply', {}, { timeout: 15000 })).toBeInTheDocument();
-		expect(screen.queryByText('timeSyncComputing')).not.toBeInTheDocument();
-
-		vi.unstubAllGlobals();
+		expect(screen.getByText('syncMode_auto')).toBeInTheDocument();
+		expect(screen.getByText('syncMode_manual')).toBeInTheDocument();
+		expect(screen.getByText('syncMode_off')).toBeInTheDocument();
 	});
 
 	it('shows bar position options when secondStyle is bar', () => {

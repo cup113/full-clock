@@ -6,7 +6,9 @@ vi.mock('../preferences', async (importOriginal) => {
 });
 
 import { save, saveNow, defaults } from '../preferences.svelte';
-import { save as rawSave } from '../preferences';
+import { save as _rawSave } from '../preferences';
+
+const rawSave = vi.mocked(_rawSave);
 
 beforeEach(() => {
 	vi.useFakeTimers();

@@ -1,28 +1,14 @@
-import { type SyncResult, syncTime } from './time.ts';
-export { type SyncResult, syncTime };
+import {
+	getSyncedOffset,
+	getSyncErrorMargin,
+	isSyncApplied,
+	applySync,
+	clearSync,
+	syncTime,
+	type SyncResult,
+} from './sync-manager.svelte';
 
-let syncedOffset = $state(0);
-let syncErrorMargin = $state(0);
-let syncApplied = $state(false);
+export { getSyncedOffset, getSyncErrorMargin, isSyncApplied, applySync, syncTime };
+export type { SyncResult };
 
-export function getSyncedOffset() {
-	return syncedOffset;
-}
-export function getSyncErrorMargin() {
-	return syncErrorMargin;
-}
-export function isSyncApplied() {
-	return syncApplied;
-}
-
-export function applySync(result: SyncResult) {
-	syncedOffset = result.offset;
-	syncErrorMargin = result.errorMargin;
-	syncApplied = true;
-}
-
-export function removeSync() {
-	syncedOffset = 0;
-	syncErrorMargin = 0;
-	syncApplied = false;
-}
+export const removeSync = clearSync;

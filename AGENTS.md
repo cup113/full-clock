@@ -1,6 +1,6 @@
 # Full Clock - 全屏时钟
 
-版本：v1.2.4 · 使用 umami 追踪。
+版本：v1.3.0 · 使用 umami 追踪。
 
 ## 框架
 
@@ -35,7 +35,7 @@ src/
 
 **诊断检查：** `pnpm svelte-kit sync; pnpm svelte-check --tsconfig ./tsconfig.json`
 
-**测试：** `pnpm vitest run`
+**测试：** `pnpm vitest run`（单元测试），`pnpm test:e2e`（E2E Playwright 测试，需先构建）
 
 **架构决策：** [docs/adr/](./docs/adr/)
 **领域术语：** [CONTEXT.md](./CONTEXT.md)

@@ -3,55 +3,11 @@
 	import { VERSION } from '$lib/version';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
-	import { syncTime, applySync, isSyncApplied, type SyncResult } from '../time.svelte';
 	import { panelBg, activeStyle } from '../color-utils';
 	import ColorConfig from './ColorConfig.svelte';
 	import SyncSection from './SyncSection.svelte';
 
 	let { open, onClose }: { open: boolean; onClose: () => void } = $props();
-
-	let syncStatus = $state<'idle' | 'computing' | 'done' | 'applied'>('idle');
-	let syncResult = $state<SyncResult | null>(null);
-	let unreliable = $derived(
-		syncResult ? 2 * syncResult.errorMargin > Math.abs(syncResult.offset) : false
-	);
-
-	const NEGLIGIBLE_THRESHOLD = 500;
-
-	$effect(() => {
-		if (open) {
-			if (isSyncApplied()) {
-				syncStatus = 'applied';
-				syncResult = null;
-			} else {
-				autoSync();
-			}
-		}
-	});
-
-	async function autoSync() {
-		syncStatus = 'computing';
-		syncResult = null;
-		try {
-			const result = await syncTime();
-			syncResult = result;
-			if (Math.abs(result.offset) < NEGLIGIBLE_THRESHOLD) {
-				applySync(result);
-				syncStatus = 'applied';
-			} else {
-				syncStatus = 'done';
-			}
-		} catch {
-			syncStatus = 'idle';
-		}
-	}
-
-	function handleApply() {
-		if (syncResult) {
-			applySync(syncResult);
-			syncStatus = 'applied';
-		}
-	}
 
 	function handleLangChange(lang: 'en' | 'zh') {
 		prefs.locale = lang;
@@ -277,13 +233,7 @@
 
 				<ColorConfig />
 
-				<SyncSection
-					{syncStatus}
-					{syncResult}
-					{unreliable}
-					onAutoSync={autoSync}
-					onApply={handleApply}
-				/>
+			<SyncSection />
 
 				<!-- LANGUAGE -->
 				<section class="rounded-xl px-4 py-4" style="background: {bg}">
