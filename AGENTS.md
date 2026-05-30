@@ -13,25 +13,28 @@
 
 ```
 src/
-├── routes/          # +layout.svelte, +page.svelte, about/+page.svelte
+├── routes/          # +layout.svelte, +layout.ts, +page.svelte, about/+page.svelte
+│   └── layout.css   # Tailwind CSS 入口
 ├── lib/
-│   ├── components/  # Clock, SecondBar, TitleBar, Settings, ColorConfig, SyncSection
-│   ├── *.svelte.ts  # 响应式状态 (preferences, tick, time, wake-lock)
-│   └── *.ts         # 纯函数 (clock, format-time, title-bar, color-utils, time)
+│   ├── components/  # Clock, SecondBar, TitleBar, Settings, ColorConfig, SyncSection, SyncBadge, SecondsModeDemo
+│   ├── *.svelte.ts  # 响应式状态 (preferences, tick, sync-manager, wake-lock)
+│   └── *.ts         # 纯函数及配置 (clock, format-time, title-bar, color-utils, time, preferences, version)
 ├── hooks.ts         # 路由钩子 (locale stripping)
-└── hooks.server.ts  # 服务端钩子 (Paraglide 中间件)
+├── hooks.server.ts  # 服务端钩子 (Paraglide 中间件)
+├── service-worker.ts # 自定义 Service Worker (缓存优先)
+└── app.html         # 应用 HTML 模板（含 i18n 语言检测 IIFE）
 ```
 
 ## 数据流
 
-四个模块级 `$state` 响应式模块：
+五个模块级 `$state` 响应式模块：
 
-| 模块                    | 作用                                                  |
-| ----------------------- | ----------------------------------------------------- |
-| `tick.svelte.ts`        | 每 100ms 更新 `now`，应用同步偏移                     |
-| `time.svelte.ts`        | 服务端-本地时间偏移量 `syncedOffset`                  |
-| `preferences.svelte.ts` | 用户偏好（背景、字体、格式等），持久化到 localStorage |
-| `wake-lock.svelte.ts`   | Screen Wake Lock API 状态                             |
+| 模块                      | 作用                                                  |
+| ------------------------- | ----------------------------------------------------- |
+| `tick.svelte.ts`          | 每 100ms 更新 `now`，应用同步偏移                     |
+| `sync-manager.svelte.ts`  | 同步状态机：syncMode/syncStatus/syncedOffset          |
+| `preferences.svelte.ts`   | 用户偏好（背景、字体、格式等），持久化到 localStorage |
+| `wake-lock.svelte.ts`     | Screen Wake Lock API 状态                             |
 
 **诊断检查：** `pnpm svelte-kit sync; pnpm svelte-check --tsconfig ./tsconfig.json`
 

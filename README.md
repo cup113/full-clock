@@ -1,5 +1,6 @@
 # Full Clock - 全屏时钟
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a392947a-2755-4222-b62a-1f8cbbe2ffc1/deploy-status)](https://app.netlify.com/projects/full-clock/deploys) [![zread](https://img.shields.io/badge/Ask_Zread-_.svg?style=flat&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff)](https://zread.ai/cup113/full-clock)
 ![Version](https://img.shields.io/github/package-json/v/cup113/full-clock/main)
 ![Coverage](<https://img.shields.io/badge/coverage-93.71%25%20(v1.3.1)-brightgreen>)
 ![License](https://img.shields.io/github/license/cup113/full-clock)
@@ -7,15 +8,15 @@
 ![Screenshot](./docs/home-page.png)
 
 > Full Clock is a clean, ad-free digital clock designed for full-screen use. It supports toggling seconds display, background progress bars, titles, dates, custom colors and fonts — ideal for exam hall countdowns or information displays.
->
+> 
 > 全屏时钟是一个纯净无广告的电子时钟，支持全屏显示，可配置性强。支持切换显示秒、背景进度条、标题、日期等，支持修改颜色与字体，适合用于考试电脑显示。
->
-> Built with [Svelte 5](https://svelte.dev/) + [SvelteKit](https://kit.svelte.dev/), styled with [Tailwind CSS](https://tailwindcss.com/), internationalized via [inlang](https://inlang.com/) + [Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs), PWA powered by [vite-plugin-pwa](https://github.com/vite-pwa/vite-plugin-pwa).
->
-> 该项目使用 [Svelte 5](https://svelte.dev/) + [SvelteKit](https://kit.svelte.dev/) 构建，UI 基于 [Tailwind CSS](https://tailwindcss.com/)，国际化使用 [inlang](https://inlang.com/) + [Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs)，PWA 使用 [vite-plugin-pwa](https://github.com/vite-pwa/vite-plugin-pwa)。
->
+> 
+> Built with [Svelte 5](https://svelte.dev/) + [SvelteKit](https://kit.svelte.dev/), styled with [Tailwind CSS v4](https://tailwindcss.com/), internationalized via [inlang](https://inlang.com/) + [Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs), PWA powered by [vite-plugin-pwa](https://github.com/vite-pwa/vite-plugin-pwa).
+> 
+> 该项目使用 [Svelte 5](https://svelte.dev/) + [SvelteKit](https://kit.svelte.dev/) 构建，UI 基于 [Tailwind CSS v4](https://tailwindcss.com/)，国际化使用 [inlang](https://inlang.com/) + [Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs)，PWA 使用 [vite-plugin-pwa](https://github.com/vite-pwa/vite-plugin-pwa)。
+> 
 > This project is a complete rewrite of the previous [clock](https://github.com/cup113/clock).
->
+> 
 > 本项目是[时钟](https://github.com/cup113/clock)的重构升级版。
 
 ## Interface / 界面介绍
