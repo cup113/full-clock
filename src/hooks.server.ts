@@ -5,7 +5,7 @@ const paraglideHandle: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request: localizedRequest, locale }) => {
 		event.request = localizedRequest;
 		return resolve(event, {
-			transformPageChunk: ({ html }) => html.replace('%lang%', locale)
+			transformPageChunk: ({ html }) => html.replace('%lang%', locale),
 		});
 	});
 

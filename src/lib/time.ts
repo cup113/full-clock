@@ -31,7 +31,15 @@ export async function timeapiFetch(signal: AbortSignal): Promise<number> {
 	const res = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=UTC', { signal });
 	if (!res.ok) throw new Error(`timeapi.io ${res.status}`);
 	const json = await res.json();
-	const ts = Date.UTC(json.year, json.month - 1, json.day, json.hour, json.minute, json.seconds, json.milliSeconds ?? 0);
+	const ts = Date.UTC(
+		json.year,
+		json.month - 1,
+		json.day,
+		json.hour,
+		json.minute,
+		json.seconds,
+		json.milliSeconds ?? 0,
+	);
 	if (isNaN(ts)) throw new Error('timeapi.io: invalid dateTime');
 	return ts;
 }
@@ -42,7 +50,10 @@ const providers: Provider[] = [
 	{ name: 'timeapi', fetch: timeapiFetch },
 ];
 
-async function measureProvider(p: Provider, signal: AbortSignal): Promise<{ offset: number; errorMargin: number }> {
+async function measureProvider(
+	p: Provider,
+	signal: AbortSignal,
+): Promise<{ offset: number; errorMargin: number }> {
 	const localBefore = Date.now();
 	const serverTime = await p.fetch(signal);
 	const localAfter = Date.now();
@@ -58,7 +69,7 @@ export async function syncTime(): Promise<SyncResult> {
 	const timeout = setTimeout(() => controller.abort(), 1500);
 
 	const results = await Promise.allSettled(
-		providers.map(p => measureProvider(p, controller.signal))
+		providers.map((p) => measureProvider(p, controller.signal)),
 	);
 	clearTimeout(timeout);
 
@@ -69,13 +80,13 @@ export async function syncTime(): Promise<SyncResult> {
 
 	if (succeeded.length === 0) throw new Error('All time providers failed');
 
-	const perfect = succeeded.find(r => r.errorMargin === 0);
+	const perfect = succeeded.find((r) => r.errorMargin === 0);
 	if (perfect) {
 		return { offset: perfect.offset, errorMargin: 0, serverTime: Date.now() + perfect.offset };
 	}
 
-	const wSum = succeeded.reduce((s, r) => s + 1 / (r.errorMargin ** 2), 0);
-	const offset = succeeded.reduce((s, r) => s + r.offset / (r.errorMargin ** 2), 0) / wSum;
+	const wSum = succeeded.reduce((s, r) => s + 1 / r.errorMargin ** 2, 0);
+	const offset = succeeded.reduce((s, r) => s + r.offset / r.errorMargin ** 2, 0) / wSum;
 	const errorMargin = 1 / Math.sqrt(wSum);
 
 	return { offset, errorMargin, serverTime: Date.now() + offset };

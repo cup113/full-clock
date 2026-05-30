@@ -15,7 +15,14 @@ describe('ColorConfig', () => {
 
 	it('renders all 6 color preset buttons', () => {
 		render(ColorConfig);
-		const titles = ['colorPresetClassic', 'colorPresetMidnight', 'colorPresetContrast', 'colorPresetSunset', 'colorPresetMatrix', 'colorPresetSlate'];
+		const titles = [
+			'colorPresetClassic',
+			'colorPresetMidnight',
+			'colorPresetContrast',
+			'colorPresetSunset',
+			'colorPresetMatrix',
+			'colorPresetSlate',
+		];
 		for (const t of titles) {
 			expect(screen.getByTitle(t)).toBeInTheDocument();
 		}

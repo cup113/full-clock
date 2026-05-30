@@ -14,7 +14,9 @@ function loadMode(): 'auto' | 'manual' | 'off' {
 	try {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		if (raw === 'auto' || raw === 'manual' || raw === 'off') return raw;
-	} catch { /* ignore */ }
+	} catch {
+		/* ignore */
+	}
 	return 'manual';
 }
 

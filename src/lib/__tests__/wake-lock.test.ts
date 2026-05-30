@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { getWakeLockStatus, enableWakeLock, disableWakeLock, resetWakeLock } from '../wake-lock.svelte';
+import {
+	getWakeLockStatus,
+	enableWakeLock,
+	disableWakeLock,
+	resetWakeLock,
+} from '../wake-lock.svelte';
 
 beforeEach(() => {
 	resetWakeLock();
@@ -20,7 +25,7 @@ describe('wake-lock', () => {
 		const sentinel = { release: vi.fn(), addEventListener: vi.fn() };
 		vi.stubGlobal('navigator', {
 			...navigator,
-			wakeLock: { request: vi.fn().mockResolvedValue(sentinel) }
+			wakeLock: { request: vi.fn().mockResolvedValue(sentinel) },
 		});
 
 		enableWakeLock();
@@ -32,7 +37,7 @@ describe('wake-lock', () => {
 	it('becomes denied when request is rejected', async () => {
 		vi.stubGlobal('navigator', {
 			...navigator,
-			wakeLock: { request: vi.fn().mockRejectedValue(new Error('denied')) }
+			wakeLock: { request: vi.fn().mockRejectedValue(new Error('denied')) },
 		});
 
 		enableWakeLock();
@@ -47,11 +52,11 @@ describe('wake-lock', () => {
 			release: vi.fn(),
 			addEventListener: vi.fn((_event: string, handler: () => void) => {
 				releaseHandler = handler;
-			})
+			}),
 		};
 		vi.stubGlobal('navigator', {
 			...navigator,
-			wakeLock: { request: vi.fn().mockResolvedValue(sentinel) }
+			wakeLock: { request: vi.fn().mockResolvedValue(sentinel) },
 		});
 
 		enableWakeLock();
@@ -66,7 +71,7 @@ describe('wake-lock', () => {
 		const sentinel = { release: mockRelease, addEventListener: vi.fn() };
 		vi.stubGlobal('navigator', {
 			...navigator,
-			wakeLock: { request: vi.fn().mockResolvedValue(sentinel) }
+			wakeLock: { request: vi.fn().mockResolvedValue(sentinel) },
 		});
 
 		enableWakeLock();
@@ -86,7 +91,7 @@ describe('wake-lock', () => {
 		const sentinel = { release: vi.fn(), addEventListener: vi.fn() };
 		vi.stubGlobal('navigator', {
 			...navigator,
-			wakeLock: { request: vi.fn().mockResolvedValue(sentinel) }
+			wakeLock: { request: vi.fn().mockResolvedValue(sentinel) },
 		});
 
 		enableWakeLock();

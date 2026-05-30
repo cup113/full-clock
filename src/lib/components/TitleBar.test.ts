@@ -48,7 +48,7 @@ describe('TitleBar', () => {
 		prefs.titleStyle = 'off';
 		const { container } = render(TitleBar, {
 			onOpenSettings: vi.fn(),
-			onToggleFullscreen: vi.fn()
+			onToggleFullscreen: vi.fn(),
 		});
 		const titleSpans = container.querySelectorAll('.text-2xl');
 		expect(titleSpans.length).toBe(0);
@@ -65,7 +65,7 @@ describe('TitleBar', () => {
 		prefs.titleCustomized = '';
 		const { container } = render(TitleBar, {
 			onOpenSettings: vi.fn(),
-			onToggleFullscreen: vi.fn()
+			onToggleFullscreen: vi.fn(),
 		});
 		const titleSpans = container.querySelectorAll('.text-3xl');
 		expect(titleSpans.length).toBe(0);
@@ -87,7 +87,7 @@ describe('TitleBar', () => {
 		const fakeElement = document.createElement('div');
 		Object.defineProperty(document, 'fullscreenElement', {
 			configurable: true,
-			get: () => fakeElement
+			get: () => fakeElement,
 		});
 
 		render(TitleBar, { onOpenSettings: vi.fn(), onToggleFullscreen: vi.fn() });
@@ -99,7 +99,7 @@ describe('TitleBar', () => {
 
 		Object.defineProperty(document, 'fullscreenElement', {
 			configurable: true,
-			get: () => null
+			get: () => null,
 		});
 	});
 });

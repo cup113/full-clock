@@ -233,7 +233,7 @@
 
 				<ColorConfig />
 
-			<SyncSection />
+				<SyncSection />
 
 				<!-- LANGUAGE -->
 				<section class="rounded-xl px-4 py-4" style="background: {bg}">

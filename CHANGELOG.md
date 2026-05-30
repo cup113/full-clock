@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning].
 - 标题栏同步状态图标（SyncBadge）：形状编码，无硬编码颜色
 - 字体感知的时钟缩放（Canvas measureText），新增 Arial 字体选项
 - E2E 测试：时钟数字在视口内适配
-- i18n 消息：syncSyncing, syncNow, syncIdle, syncLatest, syncFailed, syncMode_*
+- i18n 消息：syncSyncing, syncNow, syncIdle, syncLatest, syncFailed, syncMode\_\*
 
 ### Changed
 
@@ -255,5 +255,4 @@ and this project adheres to [Semantic Versioning].
 [1.2.3]: https://github.com/cup113/full-clock/compare/v1.2.2..v1.2.3
 [1.2.2]: https://github.com/cup113/full-clock/compare/v1.2.1..v1.2.2
 [1.2.1]: https://github.com/cup113/full-clock/compare/v1.2.0..v1.2.1
-
 [1.0.2]: https://github.com/cup113/full-clock/compare/v1.0.0..v1.0.2

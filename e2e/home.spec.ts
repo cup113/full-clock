@@ -17,13 +17,13 @@ test('switches to Chinese locale and updates date format', async ({ page }) => {
 	await expect(page.locator('span.text-3xl').first()).toContainText(/年/);
 
 	const locale = await page.evaluate(
-		() => JSON.parse(localStorage.getItem('FL_preferences') || '{}').locale
+		() => JSON.parse(localStorage.getItem('FL_preferences') || '{}').locale,
 	);
 	expect(locale).toBe('zh');
 });
 
 test('default font clock digits fit within viewport', async ({ page }) => {
-	const clock = page.locator('.flex-1 .font-bold');
+	const clock = page.getByTestId('clock-digits');
 	await expect(clock).toBeVisible();
 
 	const box = await clock.boundingBox();
@@ -42,10 +42,12 @@ test('switches to English locale and updates date format', async ({ page }) => {
 	await page.locator('[data-umami-event="switch-lang-en"]').click();
 	await page.waitForTimeout(150);
 
-	await expect(page.locator('span.text-3xl').first()).toContainText(new Date().getFullYear().toString());
+	await expect(page.locator('span.text-3xl').first()).toContainText(
+		new Date().getFullYear().toString(),
+	);
 
 	const locale = await page.evaluate(
-		() => JSON.parse(localStorage.getItem('FL_preferences') || '{}').locale
+		() => JSON.parse(localStorage.getItem('FL_preferences') || '{}').locale,
 	);
 	expect(locale).toBe('en');
 });

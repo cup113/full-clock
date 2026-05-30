@@ -5,7 +5,7 @@ import {
 	removeSync,
 	getSyncedOffset,
 	getSyncErrorMargin,
-	isSyncApplied
+	isSyncApplied,
 } from '../time.svelte';
 
 beforeEach(() => {
@@ -60,7 +60,10 @@ describe('syncTime', () => {
 
 		const fetchMock = vi.fn((url: string) => {
 			if (url.includes('shijian')) {
-				return Promise.resolve({ ok: true, json: () => Promise.resolve({ data: { timestamp: 2000 } }) });
+				return Promise.resolve({
+					ok: true,
+					json: () => Promise.resolve({ data: { timestamp: 2000 } }),
+				});
 			}
 			if (url.includes('timeapi')) {
 				return Promise.resolve({ ok: true, json: () => Promise.resolve(timeapiJson(2)) });
@@ -94,13 +97,22 @@ describe('syncTime', () => {
 	});
 
 	it('timeapiFetch returns UTC timestamp independent of local timezone', async () => {
-		vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-			ok: true,
-			json: () => Promise.resolve({
-				year: 2026, month: 6, day: 15,
-				hour: 10, minute: 30, seconds: 0, milliSeconds: 0
-			})
-		}));
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: () =>
+					Promise.resolve({
+						year: 2026,
+						month: 6,
+						day: 15,
+						hour: 10,
+						minute: 30,
+						seconds: 0,
+						milliSeconds: 0,
+					}),
+			}),
+		);
 
 		const ts = await timeapiFetch(new AbortController().signal);
 		expect(ts).toBe(Date.UTC(2026, 5, 15, 10, 30, 0, 0));

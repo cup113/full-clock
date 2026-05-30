@@ -34,7 +34,9 @@ describe('syncPrecisionColor', () => {
 
 describe('activeStyle', () => {
 	it('interleaves foreground and background', () => {
-		expect(activeStyle('#ff0000', '#0000ff')).toBe('background:#ff0000;color:#0000ff;border-color:#ff0000');
+		expect(activeStyle('#ff0000', '#0000ff')).toBe(
+			'background:#ff0000;color:#0000ff;border-color:#ff0000',
+		);
 	});
 });
 

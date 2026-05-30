@@ -103,17 +103,18 @@
 			};
 		}
 	});
-
 </script>
 
 <div
 	role="application"
 	class="fixed inset-0 flex flex-col select-none"
-	ondblclick={() => { if (!showSettings) toggleFullscreen(); }}
+	ondblclick={() => {
+		if (!showSettings) toggleFullscreen();
+	}}
 	style="background: {prefs.background}; color: {prefs.foreground}; font-family: {prefs.fontFamily}; transition: background 0.3s ease, color 0.3s ease;"
 >
 	<TitleBar onOpenSettings={openSettings} onToggleFullscreen={toggleFullscreen} />
-	<div class="relative flex-1 min-h-0">
+	<div class="relative min-h-0 flex-1">
 		<Clock secondStyle={prefs.secondStyle} />
 	</div>
 	<SecondBar />
@@ -121,7 +122,7 @@
 
 	{#if swUpdateReady}
 		<div
-			class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 flex items-center gap-3 rounded-xl bg-white/10 px-5 py-3 shadow-2xl backdrop-blur-md"
+			class="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-xl bg-white/10 px-5 py-3 shadow-2xl backdrop-blur-md"
 		>
 			<span class="text-sm text-white/90">新版本可用</span>
 			<button

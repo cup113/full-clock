@@ -31,7 +31,7 @@ test('persists background color change across reload', async ({ page }) => {
 	await page.waitForLoadState('networkidle');
 
 	const prefs = await page.evaluate(() =>
-		JSON.parse(localStorage.getItem('FL_preferences') || '{}')
+		JSON.parse(localStorage.getItem('FL_preferences') || '{}'),
 	);
 	expect(prefs.background).toBe('#0a0a23');
 });
@@ -45,7 +45,7 @@ test('persists secondStyle off across reload', async ({ page }) => {
 	await page.waitForLoadState('networkidle');
 
 	const prefs = await page.evaluate(() =>
-		JSON.parse(localStorage.getItem('FL_preferences') || '{}')
+		JSON.parse(localStorage.getItem('FL_preferences') || '{}'),
 	);
 	expect(prefs.secondStyle).toBe('off');
 });

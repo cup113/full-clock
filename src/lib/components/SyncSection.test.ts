@@ -4,7 +4,7 @@ import { resetPrefs, prefs } from '../preferences.svelte';
 import SyncSection from './SyncSection.svelte';
 
 vi.mock('../wake-lock.svelte', () => ({
-	getWakeLockStatus: vi.fn()
+	getWakeLockStatus: vi.fn(),
 }));
 import { getWakeLockStatus } from '../wake-lock.svelte';
 

@@ -9,7 +9,7 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<link rel="apple-touch-icon" href="/favicon.png" />
 		<script>
-			(function() {
+			(function () {
 				var path = location.pathname;
 				var onZhPath = path === '/zh' || path.startsWith('/zh/');
 				var hasLocalePrefix = path.match(/^\/(zh|en)(\/|$)/);
@@ -31,12 +31,16 @@
 							return;
 						}
 					}
-				} catch(e) {}
+				} catch (e) {}
 
 				// 2. Fallback: browser language auto-detection (first visit, no saved preference)
 				if (document.cookie.indexOf('PARAGLIDE_LOCALE=') !== -1) return;
 				if (navigator.languages && !hasLocalePrefix) {
-					if (navigator.languages.some(function(l) { return l.startsWith('zh'); })) {
+					if (
+						navigator.languages.some(function (l) {
+							return l.startsWith('zh');
+						})
+					) {
 						location.replace('/zh');
 					}
 				}

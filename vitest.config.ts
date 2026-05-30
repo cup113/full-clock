@@ -7,8 +7,8 @@ export default defineConfig({
 	resolve: {
 		conditions: ['browser'],
 		alias: {
-			$lib: path.resolve('./src/lib')
-		}
+			$lib: path.resolve('./src/lib'),
+		},
 	},
 	test: {
 		include: ['src/**/*.test.ts'],
@@ -17,14 +17,14 @@ export default defineConfig({
 		css: false,
 		server: {
 			deps: {
-				inline: ['svelte']
-			}
+				inline: ['svelte'],
+			},
 		},
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'lcov', 'html'],
 			include: ['src/lib/**'],
-			exclude: ['src/lib/paraglide/**']
-		}
-	}
+			exclude: ['src/lib/paraglide/**'],
+		},
+	},
 });

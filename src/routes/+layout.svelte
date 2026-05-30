@@ -6,7 +6,9 @@
 	let { children } = $props();
 
 	let locale = $derived(getLocale());
-	let canonical = $derived(locale === 'en' ? 'https://clock.cup11.top' : `https://clock.cup11.top/${locale}`);
+	let canonical = $derived(
+		locale === 'en' ? 'https://clock.cup11.top' : `https://clock.cup11.top/${locale}`,
+	);
 	let ogLocale = $derived(locale === 'zh' ? 'zh_CN' : 'en_US');
 </script>
 

@@ -7,6 +7,6 @@ export function formatDate(date: Date, locale: string): string {
 		weekday: 'long',
 		year: 'numeric',
 		month: 'long',
-		day: 'numeric'
+		day: 'numeric',
 	});
 }

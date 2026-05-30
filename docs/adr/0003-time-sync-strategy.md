@@ -20,6 +20,7 @@ Instead of querying a single API sequentially (with fallback), we fire all confi
 ### Three-mode sync (auto / manual / off)
 
 The previous "always prompt" flow (`idle → computing → done/applied ↔ user clicks Apply`) is replaced by a persistent mode selector:
+
 - **Auto**: Syncs once on page load. Results are applied silently.
 - **Manual**: Syncs only when the user clicks "Sync Now" in settings.
 - **Off**: No sync at all; badge hidden from title bar.
@@ -27,6 +28,7 @@ The previous "always prompt" flow (`idle → computing → done/applied ↔ user
 ### Title bar status badge
 
 A shape-only icon in the title bar tells the current sync state at a glance:
+
 - Syncing → spinning partial ring
 - Synced → checkmark
 - Error → warning triangle

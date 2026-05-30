@@ -7,7 +7,7 @@ export default defineConfig({
 	webServer: {
 		command: 'pnpm preview --port 4173',
 		port: 4173,
-		reuseExistingServer: true
+		reuseExistingServer: true,
 	},
-	use: { baseURL: 'http://localhost:4173' }
+	use: { baseURL: 'http://localhost:4173' },
 });

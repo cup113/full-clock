@@ -20,6 +20,6 @@ vi.mock('$lib/paraglide/messages.js', () => ({ m }));
 vi.mock('$lib/paraglide/runtime.js', () => ({
 	getLocale: () => 'en',
 	setLocale: () => {},
-	localizeHref: (href: string) => href
+	localizeHref: (href: string) => href,
 }));
 vi.mock('$app/navigation', () => ({ goto: () => {} }));

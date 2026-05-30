@@ -11,16 +11,19 @@ export function enableWakeLock() {
 		return;
 	}
 
-	navigator.wakeLock.request('screen').then((s) => {
-		_sentinel = s;
-		wakeLockStatus = 'active';
-		s.addEventListener('release', () => {
-			_sentinel = null;
-			wakeLockStatus = 'inactive';
+	navigator.wakeLock
+		.request('screen')
+		.then((s) => {
+			_sentinel = s;
+			wakeLockStatus = 'active';
+			s.addEventListener('release', () => {
+				_sentinel = null;
+				wakeLockStatus = 'inactive';
+			});
+		})
+		.catch(() => {
+			wakeLockStatus = 'denied';
 		});
-	}).catch(() => {
-		wakeLockStatus = 'denied';
-	});
 }
 
 export function disableWakeLock() {

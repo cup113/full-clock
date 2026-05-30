@@ -24,7 +24,12 @@ describe('formatTime', () => {
 
 	it('formats afternoon as 01 PM in 12h mode', () => {
 		const d = new Date(2026, 4, 22, 13, 1, 2);
-		expect(formatTime(d, '12h')).toMatchObject({ hours: '01', minutes: '01', seconds: '02', ampm: 'PM' });
+		expect(formatTime(d, '12h')).toMatchObject({
+			hours: '01',
+			minutes: '01',
+			seconds: '02',
+			ampm: 'PM',
+		});
 	});
 
 	it('returns AM for hours 0-11 and PM for hours 12-23', () => {

@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 const mockSyncTime = vi.hoisted(() => vi.fn<(...args: unknown[]) => unknown>());
 
 vi.mock('../time.ts', () => ({
-	syncTime: mockSyncTime
+	syncTime: mockSyncTime,
 }));
 
 import {
@@ -14,7 +14,7 @@ import {
 	getMode,
 	setMode,
 	sync,
-	clearSync
+	clearSync,
 } from '../sync-manager.svelte';
 
 describe('sync-manager', () => {

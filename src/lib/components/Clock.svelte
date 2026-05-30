@@ -19,7 +19,13 @@
 		if (!container) return;
 		const { width, height } = container.getBoundingClientRect();
 		if (width === 0 || height === 0) return;
-		fontSize = calcFontSize(width, height, secondStyle === 'digital', prefs.timeFormat === '12h', prefs.fontFamily);
+		fontSize = calcFontSize(
+			width,
+			height,
+			secondStyle === 'digital',
+			prefs.timeFormat === '12h',
+			prefs.fontFamily,
+		);
 	}
 
 	$effect(() => {
@@ -52,7 +58,7 @@
 		class="inline-flex items-end leading-none tracking-wider whitespace-nowrap"
 		style="font-size: {fontSize}px; font-family: {prefs.fontFamily}; color: {prefs.foreground}; translate: 0 -1.5rem; transition: font-size 0.2s ease;"
 	>
-		<span class="font-bold">{fmt.hours}:{fmt.minutes}</span>
+		<span data-testid="clock-digits" class="font-bold">{fmt.hours}:{fmt.minutes}</span>
 		{#if secondStyle === 'digital'}
 			<span class="inline-flex flex-col items-end leading-none">
 				{#if prefs.timeFormat === '12h'}
@@ -61,7 +67,7 @@
 				<span class="text-[0.5em] opacity-80">:{fmt.seconds}</span>
 			</span>
 		{:else if prefs.timeFormat === '12h'}
-			<span class="ml-1 text-[0.35em] font-normal opacity-60 align-top">{fmt.ampm}</span>
+			<span class="ml-1 align-top text-[0.35em] font-normal opacity-60">{fmt.ampm}</span>
 		{/if}
 	</div>
 </div>

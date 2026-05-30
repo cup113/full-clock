@@ -8,15 +8,17 @@
 
 	let {
 		onOpenSettings,
-		onToggleFullscreen
+		onToggleFullscreen,
 	}: { onOpenSettings: () => void; onToggleFullscreen: () => void } = $props();
 
 	let dateStr = $state('');
 
 	let displayTitle = $derived(
-		prefs.titleStyle === 'date' ? dateStr :
-		prefs.titleStyle === 'custom' && prefs.titleCustomized ? prefs.titleCustomized :
-		''
+		prefs.titleStyle === 'date'
+			? dateStr
+			: prefs.titleStyle === 'custom' && prefs.titleCustomized
+				? prefs.titleCustomized
+				: '',
 	);
 
 	$effect(() => {
@@ -70,9 +72,7 @@
 	}
 </script>
 
-<div
-	class="shrink-0 flex items-start justify-between px-3 py-2"
->
+<div class="flex shrink-0 items-start justify-between px-3 py-2">
 	<div
 		class="flex items-center gap-1 transition-all duration-500"
 		class:opacity-0={!controlsVisible && isFullscreen}
@@ -139,20 +139,20 @@
 		>
 			<button
 				onclick={() => handleLang('zh')}
-				class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-inherit text-sm font-bold transition-all duration-200 hover:bg-white/10"
+				class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-sm font-bold text-inherit transition-all duration-200 hover:bg-white/10"
 				class:opacity-40={getLocale() !== 'zh'}
 				class:opacity-100={getLocale() === 'zh'}
 				title="中文"
-				data-umami-event="switch-lang-zh"
-			>中</button>
+				data-umami-event="switch-lang-zh">中</button
+			>
 			<button
 				onclick={() => handleLang('en')}
-				class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-inherit text-sm font-bold transition-all duration-200 hover:bg-white/10"
+				class="cursor-pointer rounded-lg border-none bg-transparent px-1.5 py-1 text-sm font-bold text-inherit transition-all duration-200 hover:bg-white/10"
 				class:opacity-40={getLocale() !== 'en'}
 				class:opacity-100={getLocale() === 'en'}
 				title="English"
-				data-umami-event="switch-lang-en"
-			>EN</button>
+				data-umami-event="switch-lang-en">EN</button
+			>
 			<SyncBadge />
 			<div class="mx-1 h-5 w-px bg-white/20"></div>
 		</div>

@@ -29,7 +29,16 @@
 			: 'background:transparent;color:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.15)'}
 		onclick={toggleKeepScreenOn}
 	>
-		<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		<svg
+			viewBox="0 0 24 24"
+			width="16"
+			height="16"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		>
 			<path d="M18 8h1a4 4 0 0 1 0 8h-1" />
 			<path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
 			<line x1="6" y1="1" x2="6" y2="4" />
@@ -57,7 +66,9 @@
 
 	<div class="mb-3 flex items-center justify-between gap-y-2">
 		<span class="shrink-0 text-xs text-white/60">{m.timeSync()}</span>
-		<div class="inline-flex divide-x divide-white/15 overflow-hidden rounded-lg border border-white/15">
+		<div
+			class="inline-flex divide-x divide-white/15 overflow-hidden rounded-lg border border-white/15"
+		>
 			{#each modeOptions as opt (opt.value)}
 				<button
 					class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
@@ -65,8 +76,7 @@
 					style={state.mode === opt.value ? activeStyle(prefs.foreground, prefs.background) : ''}
 					onclick={() => setMode(opt.value)}
 					data-umami-event="set-sync-mode"
-					data-umami-event-mode={opt.value}
-				>{opt.label()}</button
+					data-umami-event-mode={opt.value}>{opt.label()}</button
 				>
 			{/each}
 		</div>
@@ -83,7 +93,9 @@
 			data-umami-event="sync-now"
 		>
 			{#if state.status === 'syncing'}
-				<span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+				<span
+					class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+				></span>
 				{m.timeSyncComputing()}
 			{:else}
 				{m.syncNow()}
@@ -94,7 +106,11 @@
 			{#if state.status === 'synced'}
 				<p class="text-xs text-green-400">
 					{m.syncLatest({ error: state.syncErrorMargin.toFixed(0) })}
-					<span class="ml-1.5 inline-block h-2 w-2 rounded-full {syncPrecisionColor(state.syncErrorMargin)}"></span>
+					<span
+						class="ml-1.5 inline-block h-2 w-2 rounded-full {syncPrecisionColor(
+							state.syncErrorMargin,
+						)}"
+					></span>
 				</p>
 			{:else if state.status === 'error'}
 				<p class="text-xs text-red-400">{m.syncFailed()}</p>

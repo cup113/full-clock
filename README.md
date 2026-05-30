@@ -1,7 +1,7 @@
 # Full Clock - 全屏时钟
 
 ![Version](https://img.shields.io/github/package-json/v/cup113/full-clock/main)
-![Repo size](https://img.shields.io/github/repo-size/cup113/full-clock)
+![Coverage](<https://img.shields.io/badge/coverage-93.71%25%20(v1.3.1)-brightgreen>)
 ![License](https://img.shields.io/github/license/cup113/full-clock)
 
 ![Screenshot](./docs/home-page.png)

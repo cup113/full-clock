@@ -39,6 +39,7 @@ Time calibration state machine. Values: `idle` → `syncing` → `synced` or `er
 
 **syncBadge**:
 Icon in the title bar reflecting `syncStatus`. Uses shape-only encoding (no hardcoded colors) to avoid theme conflicts.
+
 - `syncing`: spinning partial ring
 - `synced`: checkmark
 - `error`: warning triangle

@@ -26,12 +26,12 @@ src/
 
 四个模块级 `$state` 响应式模块：
 
-| 模块 | 作用 |
-|---|---|
-| `tick.svelte.ts` | 每 100ms 更新 `now`，应用同步偏移 |
-| `time.svelte.ts` | 服务端-本地时间偏移量 `syncedOffset` |
+| 模块                    | 作用                                                  |
+| ----------------------- | ----------------------------------------------------- |
+| `tick.svelte.ts`        | 每 100ms 更新 `now`，应用同步偏移                     |
+| `time.svelte.ts`        | 服务端-本地时间偏移量 `syncedOffset`                  |
 | `preferences.svelte.ts` | 用户偏好（背景、字体、格式等），持久化到 localStorage |
-| `wake-lock.svelte.ts` | Screen Wake Lock API 状态 |
+| `wake-lock.svelte.ts`   | Screen Wake Lock API 状态                             |
 
 **诊断检查：** `pnpm svelte-kit sync; pnpm svelte-check --tsconfig ./tsconfig.json`
 

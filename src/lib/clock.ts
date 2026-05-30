@@ -23,7 +23,13 @@ function measureFont(fontFamily: string) {
 	return metrics;
 }
 
-export function calcFontSize(width: number, height: number, hasSeconds: boolean, hasAmpm: boolean, fontFamily: string): number {
+export function calcFontSize(
+	width: number,
+	height: number,
+	hasSeconds: boolean,
+	hasAmpm: boolean,
+	fontFamily: string,
+): number {
 	const { digitW, colonW, ampmW } = measureFont(fontFamily);
 	const maxW = width * 0.92;
 	const maxH = height * 0.88;
