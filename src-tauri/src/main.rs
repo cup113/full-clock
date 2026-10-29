@@ -39,6 +39,7 @@ fn measure(server: &str) -> Result<NtpResult, String> {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![ntp_query])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

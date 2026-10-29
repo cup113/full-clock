@@ -19,12 +19,12 @@ src/
 ├── lib/
 │   ├── components/  # Clock, SecondBar, TitleBar, Settings, ColorConfig, SyncSection, SyncBadge, SecondsModeDemo
 │   ├── *.svelte.ts  # 响应式状态 (preferences, tick, sync-manager, wake-lock)
-│   └── *.ts         # 纯函数及配置 (clock, format-time, title-bar, color-utils, time, platform, preferences, version)
+│   └── *.ts         # 纯函数及配置 (clock, format-time, title-bar, color-utils, time, platform, external-links, preferences, version)
 ├── hooks.ts         # 路由钩子 (locale stripping)
 ├── hooks.server.ts  # 服务端钩子 (Paraglide 中间件)
 ├── service-worker.ts # 自定义 Service Worker (缓存优先)
 └── app.html         # 应用 HTML 模板（含 i18n 语言检测 IIFE）
-src-tauri/           # Tauri v2 桌面壳（Rust + tauri.conf.json + main.rs 的 ntp_query）
+src-tauri/           # Tauri v2 桌面壳（Rust + tauri.conf.json + main.rs 的 ntp_query 与 opener 插件）
 ```
 
 ## 数据流
@@ -42,7 +42,7 @@ src-tauri/           # Tauri v2 桌面壳（Rust + tauri.conf.json + main.rs 的
 
 **测试：** `pnpm vitest run`（单元测试），`pnpm test:e2e`（E2E Playwright 测试，需先构建）
 
-**桌面端：** `pnpm tauri dev`（开发窗），`pnpm tauri build`（出 NSIS 安装包 + 便携 exe）；桌面构建由 Tauri CLI 注入 `TAURI_ENV_PLATFORM` 自动关闭 SW 注册，web 构建不受影响。
+**桌面端：** `pnpm tauri dev`（开发窗），`pnpm tauri build`（出 NSIS 安装包 + 便携 exe）；桌面构建由 Tauri CLI 注入 `TAURI_ENV_PLATFORM` 自动关闭 SW 注册，web 构建不受影响。壳内外链由 `src/lib/external-links.ts` 在 document 上拦截、经 `tauri-plugin-opener` 交给系统浏览器（`capabilities/default.json` 授权），web 端保持原生新标签页。`tauri.conf.json` 的 `dangerousDisableAssetCspModification` 不能关：关掉后 `style-src` 带上 nonce，内联 `style="…"` 全部失效（原因见 ADR 0004）。
 
 **版本：** `package.json`、`src/lib/version.ts`、`src-tauri/Cargo.toml` 三处一致（`version-sync.test.ts` 守卫）；`tauri.conf.json` 不写 `version`，由 Tauri 读 Cargo.toml。
 

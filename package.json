@@ -50,6 +50,7 @@
 		"vitest": "^4.1.7"
 	},
 	"dependencies": {
-		"@tauri-apps/api": "^2.12.4"
+		"@tauri-apps/api": "^2.12.4",
+		"@tauri-apps/plugin-opener": "^2.7.2"
 	}
 }

@@ -2,8 +2,13 @@
 	import './layout.css';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale } from '$lib/paraglide/runtime.js';
+	import { interceptExternalLinks } from '$lib/external-links';
 
 	let { children } = $props();
+
+	// External links are inert in the desktop shell unless the click is taken
+	// over; on the web this is a no-op and `target="_blank"` still works.
+	$effect(() => interceptExternalLinks());
 
 	let locale = $derived(getLocale());
 	let canonical = $derived(
