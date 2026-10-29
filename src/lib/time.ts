@@ -1,12 +1,24 @@
+import { isTauri } from './platform.ts';
+
 export interface SyncResult {
 	offset: number;
 	errorMargin: number;
 	serverTime: number;
 }
 
+interface Measurement {
+	offset: number;
+	errorMargin: number;
+}
+
 interface Provider {
 	name: string;
-	fetch(signal: AbortSignal): Promise<number>;
+	fetch?(signal: AbortSignal): Promise<number>;
+	/**
+	 * Providers that time the exchange themselves (e.g. SNTP over UDP in the
+	 * desktop shell) report the offset directly instead of a server timestamp.
+	 */
+	measure?(signal: AbortSignal): Promise<Measurement>;
 }
 
 async function shijianFetch(signal: AbortSignal): Promise<number> {
@@ -44,16 +56,67 @@ export async function timeapiFetch(signal: AbortSignal): Promise<number> {
 	return ts;
 }
 
-const providers: Provider[] = [
+const httpProviders: Provider[] = [
 	{ name: 'shijian', fetch: shijianFetch },
 	{ name: 'worldtime', fetch: worldtimeFetch },
 	{ name: 'timeapi', fetch: timeapiFetch },
 ];
 
-async function measureProvider(
-	p: Provider,
-	signal: AbortSignal,
-): Promise<{ offset: number; errorMargin: number }> {
+/** SNTP servers queried by the desktop shell (browsers cannot open UDP 123). */
+export const NTP_SERVERS = [
+	'ntp.aliyun.com',
+	'ntp.tencent.com',
+	'time.windows.com',
+	'pool.ntp.org',
+];
+
+function withAbort<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
+	if (signal.aborted) return Promise.reject(new Error('aborted'));
+	return new Promise<T>((resolve, reject) => {
+		const onAbort = () => reject(new Error('aborted'));
+		signal.addEventListener('abort', onAbort, { once: true });
+		promise.then(
+			(value) => {
+				signal.removeEventListener('abort', onAbort);
+				resolve(value);
+			},
+			(error) => {
+				signal.removeEventListener('abort', onAbort);
+				reject(error);
+			},
+		);
+	});
+}
+
+async function ntpMeasure(server: string, signal: AbortSignal): Promise<Measurement> {
+	// Imported lazily so the web bundle never evaluates the Tauri client.
+	const { invoke } = await import('@tauri-apps/api/core');
+	const result = await withAbort(
+		invoke<{ offsetMs: number; rttMs: number }>('ntp_query', { server }),
+		signal,
+	);
+	return { offset: result.offsetMs, errorMargin: Math.max(result.rttMs / 2, 1) };
+}
+
+function ntpProviders(): Provider[] {
+	return NTP_SERVERS.map((server) => ({
+		name: `ntp:${server}`,
+		measure: (signal: AbortSignal) => ntpMeasure(server, signal),
+	}));
+}
+
+/**
+ * All time sources for the current runtime: the HTTP APIs everywhere, plus the
+ * SNTP servers when running inside the desktop shell.
+ */
+export function getProviders(): Provider[] {
+	return isTauri() ? [...httpProviders, ...ntpProviders()] : httpProviders;
+}
+
+async function measureProvider(p: Provider, signal: AbortSignal): Promise<Measurement> {
+	if (p.measure) return p.measure(signal);
+	if (!p.fetch) throw new Error(`${p.name}: provider has no measurement`);
+
 	const localBefore = Date.now();
 	const serverTime = await p.fetch(signal);
 	const localAfter = Date.now();
@@ -69,11 +132,11 @@ export async function syncTime(): Promise<SyncResult> {
 	const timeout = setTimeout(() => controller.abort(), 1500);
 
 	const results = await Promise.allSettled(
-		providers.map((p) => measureProvider(p, controller.signal)),
+		getProviders().map((p) => measureProvider(p, controller.signal)),
 	);
 	clearTimeout(timeout);
 
-	const succeeded: { offset: number; errorMargin: number }[] = [];
+	const succeeded: Measurement[] = [];
 	for (const r of results) {
 		if (r.status === 'fulfilled') succeeded.push(r.value);
 	}

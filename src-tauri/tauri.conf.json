@@ -1,0 +1,43 @@
+{
+	"$schema": "https://schema.tauri.app/config/2",
+	"productName": "Full Clock",
+	"mainBinaryName": "full-clock",
+	"identifier": "top.cup11.full-clock",
+	"build": {
+		"beforeDevCommand": "pnpm dev",
+		"devUrl": "http://localhost:5173",
+		"beforeBuildCommand": "pnpm build",
+		"frontendDist": "../build"
+	},
+	"app": {
+		"withGlobalTauri": false,
+		"windows": [
+			{
+				"label": "main",
+				"title": "Full Clock",
+				"width": 900,
+				"height": 600,
+				"minWidth": 420,
+				"minHeight": 320,
+				"center": true,
+				"resizable": true,
+				"fullscreen": false
+			}
+		],
+		"security": {
+			"csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.shijian.online https://worldtimeapi.org https://timeapi.io",
+			"dangerousDisableAssetCspModification": true
+		}
+	},
+	"bundle": {
+		"active": true,
+		"targets": ["nsis"],
+		"icon": [
+			"icons/32x32.png",
+			"icons/128x128.png",
+			"icons/128x128@2x.png",
+			"icons/icon.icns",
+			"icons/icon.ico"
+		]
+	}
+}

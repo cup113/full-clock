@@ -1,5 +1,10 @@
 import adapter from '@sveltejs/adapter-static';
 
+// Tauri injects TAURI_ENV_* into beforeDevCommand/beforeBuildCommand. The desktop
+// shell embeds the assets in the executable, so the cache-first service worker
+// would only pin stale files across app updates — register it for the web only.
+const isDesktopBuild = Boolean(process.env.TAURI_ENV_PLATFORM);
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	compilerOptions: {
@@ -15,6 +20,7 @@ const config = {
 		output: {
 			// no bundleStrategy — let SvelteKit split by route
 		},
+		serviceWorker: isDesktopBuild ? { register: false } : undefined,
 	},
 };
 

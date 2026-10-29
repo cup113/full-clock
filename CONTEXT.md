@@ -52,6 +52,7 @@ Screen Wake Lock API state machine. Values: `inactive`, `active`, `unsupported`,
 
 - **secondStyle**=`bar` paired with **barPosition** determines where the progress bar renders (fullscreen, top, or bottom)
 - **syncStatus** is driven by **syncManager**, which fires parallel requests with 1.5s timeout and combines results via inverse-variance weighted average
+- the provider set depends on the runtime: the web build always queries the three HTTP APIs, while the desktop build appends four NTP providers (`ntp_query` over UDP 123, measured in Rust). **offset** and **errorMargin** keep their meaning either way
 - **wakeLock** is bound to `prefs.keepScreenOn`; enabling/disabling transitions the state
 
 ## Example dialogue
