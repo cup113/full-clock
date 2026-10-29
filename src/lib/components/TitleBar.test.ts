@@ -83,6 +83,13 @@ describe('TitleBar', () => {
 		expect(prefs.locale).toBe('zh');
 	});
 
+	it('keep-screen-on badge sits in the left control group with settings and help', () => {
+		render(TitleBar, { onOpenSettings: vi.fn(), onToggleFullscreen: vi.fn() });
+		const badge = screen.getByLabelText('keepScreenOn');
+		expect(badge.parentElement).toBe(screen.getByLabelText('settings').parentElement);
+		expect(badge.parentElement).toBe(screen.getByLabelText('help').parentElement);
+	});
+
 	it('shows exit fullscreen icon when in fullscreen mode', async () => {
 		const fakeElement = document.createElement('div');
 		Object.defineProperty(document, 'fullscreenElement', {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { prefs, save, saveNow } from '$lib/preferences.svelte';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
-	import { enableWakeLock, disableWakeLock } from '$lib/wake-lock.svelte';
+	import { startWakeLockLifecycle } from '$lib/wake-lock.svelte';
 	import { getMode, sync } from '$lib/sync-manager.svelte';
 	import Clock from '$lib/components/Clock.svelte';
 	import SecondBar from '$lib/components/SecondBar.svelte';
@@ -96,12 +96,8 @@
 	});
 
 	$effect(() => {
-		if (prefs.keepScreenOn) {
-			enableWakeLock();
-			return () => {
-				disableWakeLock();
-			};
-		}
+		if (!prefs.keepScreenOn) return;
+		return startWakeLockLifecycle();
 	});
 </script>
 

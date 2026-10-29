@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { formatDate } from '../title-bar';
 	import SyncBadge from './SyncBadge.svelte';
+	import WakeBadge from './WakeBadge.svelte';
 
 	let {
 		onOpenSettings,
@@ -123,6 +124,7 @@
 				<path d="M12 17h.01" />
 			</svg>
 		</button>
+		<WakeBadge />
 	</div>
 
 	<div class="flex-1 px-3 text-center">

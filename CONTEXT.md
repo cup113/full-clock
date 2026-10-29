@@ -47,12 +47,23 @@ Icon in the title bar reflecting `syncStatus`. Uses shape-only encoding (no hard
 
 **wakeLock**:
 Screen Wake Lock API state machine. Values: `inactive`, `active`, `unsupported`, `denied`.
+`denied` is transient, not a permission verdict — wake locks have no permission prompt, so a request refused while the document was hidden is retried once it is visible again.
+
+**wakeLockBadge**:
+Coffee-cup icon in the title bar (left group, innermost) showing whether the screen is being kept on. Always visible and clickable — it toggles `keepScreenOn` directly, so it is both indicator and control. Hidden only when the browser has no Wake Lock API (`unsupported`).
+_Encoding_: the shape never changes; opacity carries the state (`active` opaque, off dimmed, pending dimmed and pulsing), `denied` told apart by its tooltip alone. Reuses the icon of the "keep screen on" switch in Settings — one concept, one metaphor. Not a sun: a sun reads as a light/dark theme toggle.
+
+**keep screen on**:
+The user preference `keepScreenOn`, exposed in Settings and on the `wakeLockBadge`.
+_Avoid_: 屏幕常量 (typo for 屏幕常亮), always-on display
 
 ## Relationships
 
 - **secondStyle**=`bar` paired with **barPosition** determines where the progress bar renders (fullscreen, top, or bottom)
 - **syncStatus** is driven by **syncManager**, which fires parallel requests with 1.5s timeout and combines results via inverse-variance weighted average
 - **wakeLock** is bound to `prefs.keepScreenOn`; enabling/disabling transitions the state
+- **wakeLockBadge** reflects **wakeLock**, never `keepScreenOn` alone: the two diverge while a request is pending and when the lock was dropped
+- the browser releases the **wakeLock** whenever the document is hidden, so it is re-acquired on return; without that, the preference stays on while the lock is silently gone
 
 ## Example dialogue
 
@@ -68,3 +79,5 @@ Screen Wake Lock API state machine. Values: `inactive`, `active`, `unsupported`,
 - "bar" could be confused with a navigation or menu bar — resolved: in this project "bar" always refers to the second progress bar
 - "NEGLIGIBLE_THRESHOLD" was removed in v1.3 — sync results are always auto-applied; user confirmation step eliminated
 - "unreliable" signal was removed — cross-validation between providers was found redundant since all query the same NTP source; inverse-variance weighting is sufficient
+- "屏幕常量" was a recurring typo/mishearing of 屏幕常亮 — canonical term is **keep screen on / 保持亮屏**
+- the indefinite "保持亮屏请求中…" that survived a tab switch was not a stuck request: the browser had already dropped the lock and nothing re-acquired it — `wakeLock` now treats a hidden-then-visible document as a fresh request
