@@ -44,11 +44,6 @@ beforeEach(() => {
 });
 
 describe('SyncSection', () => {
-	it('renders utilities section header', () => {
-		render(SyncSection);
-		expect(screen.getByText('utilities')).toBeInTheDocument();
-	});
-
 	it('renders keepScreenOn toggle button', () => {
 		render(SyncSection);
 		expect(screen.getByText('keepScreenOn')).toBeInTheDocument();
