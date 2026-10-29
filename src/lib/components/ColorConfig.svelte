@@ -2,7 +2,8 @@
 	import { prefs } from '../preferences.svelte';
 	import { m } from '$lib/paraglide/messages.js';
 	import { formatTime } from '../format-time';
-	import { panelBg } from '../color-utils';
+	import { slide } from 'svelte/transition';
+	import Icon from './Icon.svelte';
 
 	const PREVIEW_DATE = new Date(2024, 0, 1, 19, 2, 34);
 
@@ -80,131 +81,178 @@
 		prefs.colorProgress = p.colorProgress;
 	}
 
+	function isActivePreset(p: (typeof colorPresets)[number]): boolean {
+		return (
+			prefs.background.toLowerCase() === p.background.toLowerCase() &&
+			prefs.foreground.toLowerCase() === p.foreground.toLowerCase() &&
+			prefs.colorProgress.toLowerCase() === p.colorProgress.toLowerCase()
+		);
+	}
+
 	let previewFmt = $derived(formatTime(PREVIEW_DATE, prefs.timeFormat));
-	const bg = $derived(panelBg(prefs.background));
 </script>
 
-<section class="rounded-xl px-4 py-4" style="background: {bg}">
-	<h3 class="mb-4 text-[11px] font-bold tracking-wider text-white/40 uppercase">{m.theme()}</h3>
-
-	<span class="mb-2 block text-xs text-white/60">{m.colors()}</span>
-	<div class="mb-3 grid grid-cols-6 gap-1.5">
-		{#each colorPresets as p (p.id)}
+<section class="overflow-hidden rounded-xl border border-surface-line bg-surface-card">
+	<div class="divide-y divide-surface-line">
+		<!-- COLORS (expands to presets + pickers) -->
+		<div>
 			<button
-				class="flex cursor-pointer items-center justify-center gap-0.5 rounded-md border border-white/10 px-1 py-1.5 text-[10px] text-white/50 transition-colors hover:border-white/30 hover:text-white/70"
-				onclick={() => applyColorPreset(p)}
-				data-umami-event="apply-color-preset"
-				data-umami-event-preset={p.id}
-				title={p.label()}
+				type="button"
+				class="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-raised/50"
+				aria-expanded={colorDetailExpanded}
+				data-umami-event="toggle-color-detail"
+				onclick={() => (colorDetailExpanded = !colorDetailExpanded)}
 			>
-				<span class="inline-flex gap-px">
-					<span class="h-3 w-3 rounded-sm" style="background:{p.background}"></span>
-					<span class="h-3 w-3 rounded-sm" style="background:{p.foreground}"></span>
-					<span class="h-3 w-3 rounded-sm" style="background:{p.colorProgress}"></span>
+				<span class="flex items-center gap-2 text-sm text-ink">
+					<Icon name="swatch" />
+					{m.colors()}
+				</span>
+				<span class="flex items-center gap-2.5">
+					<span class="inline-flex gap-1">
+						<span
+							class="h-3.5 w-3.5 rounded-sm border border-black/40"
+							style="background:{prefs.background}"
+						></span>
+						<span
+							class="h-3.5 w-3.5 rounded-sm border border-black/40"
+							style="background:{prefs.foreground}"
+						></span>
+						<span
+							class="h-3.5 w-3.5 rounded-sm border border-black/40"
+							style="background:{prefs.colorProgress}"
+						></span>
+					</span>
+					<svg
+						viewBox="0 0 24 24"
+						width="16"
+						height="16"
+						class={'shrink-0 text-ink-muted transition-transform duration-200 ' +
+							(colorDetailExpanded ? 'rotate-180' : '')}
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M6 9l6 6 6-6" />
+					</svg>
 				</span>
 			</button>
-		{/each}
-	</div>
 
-	<button
-		class={'mb-3 flex w-full cursor-pointer items-center gap-4 rounded-lg border px-4 py-3 text-left transition-colors ' +
-			(colorDetailExpanded ? 'border-white/20' : 'border-white/10 hover:border-white/20')}
-		onclick={() => (colorDetailExpanded = !colorDetailExpanded)}
-	>
-		<div
-			class="relative flex items-center gap-4 overflow-hidden rounded-md px-4 py-3"
-			style="background:{prefs.background}"
-		>
-			{#if prefs.secondStyle === 'bar'}
-				{#if prefs.barPosition === 'fullscreen'}
-					<div
-						class="pointer-events-none absolute top-0 bottom-0 left-0"
-						style="width:56.666%; background:{prefs.colorProgress}; opacity:{prefs.progressOpacity /
-							100};"
-					></div>
-				{:else if prefs.barPosition === 'top'}
-					<div
-						class="pointer-events-none absolute top-0 left-0"
-						style="width:56.666%; height:8px; background:{prefs.colorProgress}; opacity:{prefs.progressOpacity /
-							100};"
-					></div>
-				{:else}
-					<div
-						class="pointer-events-none absolute bottom-0 left-0"
-						style="width:56.666%; height:8px; background:{prefs.colorProgress}; opacity:{prefs.progressOpacity /
-							100};"
-					></div>
-				{/if}
+			{#if colorDetailExpanded}
+				<div class="px-4 pb-4" transition:slide={{ duration: 200 }}>
+					<div class="ml-2 space-y-3 border-l-2 border-accent/60 pl-3">
+						<div class="grid grid-cols-3 gap-1.5">
+							{#each colorPresets as p (p.id)}
+								<button
+									type="button"
+									class={[
+										'flex cursor-pointer items-center gap-1.5 rounded-md border px-1.5 py-1.5 transition-colors',
+										isActivePreset(p)
+											? 'border-accent/70 bg-accent/20'
+											: 'border-surface-line hover:border-accent/50',
+									]}
+									onclick={() => applyColorPreset(p)}
+									data-umami-event="apply-color-preset"
+									data-umami-event-preset={p.id}
+									title={p.label()}
+								>
+									<span class="inline-flex shrink-0 gap-px">
+										<span class="h-2.5 w-2.5 rounded-sm" style="background:{p.background}"></span>
+										<span class="h-2.5 w-2.5 rounded-sm" style="background:{p.foreground}"></span>
+										<span class="h-2.5 w-2.5 rounded-sm" style="background:{p.colorProgress}"
+										></span>
+									</span>
+									<span class="truncate text-xs text-ink-muted">{p.label()}</span>
+								</button>
+							{/each}
+						</div>
+
+						<div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+							<label class="flex items-center gap-1.5">
+								<input type="color" bind:value={prefs.background} />
+								<code class="font-mono text-xs text-ink-muted">{prefs.background}</code>
+							</label>
+							<label class="flex items-center gap-1.5">
+								<input type="color" bind:value={prefs.foreground} />
+								<code class="font-mono text-xs text-ink-muted">{prefs.foreground}</code>
+							</label>
+							<label class="flex items-center gap-1.5">
+								<input type="color" bind:value={prefs.colorProgress} />
+								<code class="font-mono text-xs text-ink-muted">{prefs.colorProgress}</code>
+							</label>
+						</div>
+					</div>
+				</div>
 			{/if}
-			<div class="flex items-end gap-2">
-				<span
-					class="text-4xl leading-none font-bold"
-					style="color:{prefs.foreground}; font-family:{prefs.fontFamily}"
-				>
-					{previewFmt.hours}:{previewFmt.minutes}
-				</span>
-				{#if prefs.secondStyle === 'digital'}
-					<span class="inline-flex flex-col items-end leading-none">
-						{#if prefs.timeFormat === '12h'}
-							<span class="text-[0.3em] font-normal opacity-60">{previewFmt.ampm}</span>
-						{/if}
-						<span class="text-[0.5em] font-normal opacity-70">:{previewFmt.seconds}</span>
-					</span>
-				{:else if prefs.timeFormat === '12h'}
-					<span class="align-top text-[0.3em] font-normal opacity-60">{previewFmt.ampm}</span>
+		</div>
+
+		<!-- FONT -->
+		<div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+			<span class="flex items-center gap-2 text-sm text-ink">
+				<Icon name="type" />
+				{m.font()}
+			</span>
+			<select
+				bind:value={prefs.fontFamily}
+				class="max-w-[60%] cursor-pointer rounded-lg border border-surface-line bg-surface-raised px-3 py-1.5 text-sm text-ink transition-colors outline-none focus:border-accent"
+			>
+				{#each commonFonts as font (font)}
+					<option value={font} class="text-gray-900">{font}</option>
+				{/each}
+			</select>
+		</div>
+
+		<!-- PREVIEW -->
+		<div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+			<span class="flex items-center gap-2 text-sm text-ink">
+				<Icon name="eye" />
+				{m.fontPreview()}
+			</span>
+			<div
+				class="relative flex items-center gap-2.5 overflow-hidden rounded-lg border border-surface-line px-3.5 py-2"
+				style="background:{prefs.background}"
+			>
+				{#if prefs.secondStyle === 'bar'}
+					{#if prefs.barPosition === 'fullscreen'}
+						<div
+							class="pointer-events-none absolute top-0 bottom-0 left-0"
+							style="width:56.666%; background:{prefs.colorProgress}; opacity:{prefs.progressOpacity /
+								100};"
+						></div>
+					{:else if prefs.barPosition === 'top'}
+						<div
+							class="pointer-events-none absolute top-0 left-0"
+							style="width:56.666%; height:8px; background:{prefs.colorProgress}; opacity:{prefs.progressOpacity /
+								100};"
+						></div>
+					{:else}
+						<div
+							class="pointer-events-none absolute bottom-0 left-0"
+							style="width:56.666%; height:8px; background:{prefs.colorProgress}; opacity:{prefs.progressOpacity /
+								100};"
+						></div>
+					{/if}
 				{/if}
-			</div>
-			<div class="flex flex-col gap-1">
-				<span
-					class="h-3 w-5 rounded-sm border border-white/10"
-					style="background:{prefs.background}"
-				></span>
-				<span class="h-3 w-5 rounded-sm" style="background:{prefs.foreground}"></span>
-				<span class="h-3 w-5 rounded-sm" style="background:{prefs.colorProgress}"></span>
-			</div>
-		</div>
-		<span
-			class={'ml-auto text-xs text-white/30 transition-transform' +
-				(colorDetailExpanded ? ' rotate-180' : '')}>▾</span
-		>
-	</button>
-
-	{#if colorDetailExpanded}
-		<div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg bg-white/5 px-3 py-2">
-			<div class="flex items-center gap-1">
-				<input
-					type="color"
-					bind:value={prefs.background}
-					class="h-7 w-7 cursor-pointer rounded border-0 p-0"
-				/>
-				<code class="font-mono text-[10px] text-white/50">{prefs.background}</code>
-			</div>
-			<div class="flex items-center gap-1">
-				<input
-					type="color"
-					bind:value={prefs.foreground}
-					class="h-7 w-7 cursor-pointer rounded border-0 p-0"
-				/>
-				<code class="font-mono text-[10px] text-white/50">{prefs.foreground}</code>
-			</div>
-			<div class="flex items-center gap-1">
-				<input
-					type="color"
-					bind:value={prefs.colorProgress}
-					class="h-7 w-7 cursor-pointer rounded border-0 p-0"
-				/>
-				<code class="font-mono text-[10px] text-white/50">{prefs.colorProgress}</code>
+				<div class="relative flex items-end gap-1.5">
+					<span
+						class="text-3xl leading-none font-bold"
+						style="color:{prefs.foreground}; font-family:{prefs.fontFamily}"
+					>
+						{previewFmt.hours}:{previewFmt.minutes}
+					</span>
+					{#if prefs.secondStyle === 'digital'}
+						<span class="inline-flex flex-col items-end leading-none">
+							{#if prefs.timeFormat === '12h'}
+								<span class="text-[0.3em] font-normal opacity-60">{previewFmt.ampm}</span>
+							{/if}
+							<span class="text-[0.5em] font-normal opacity-70">:{previewFmt.seconds}</span>
+						</span>
+					{:else if prefs.timeFormat === '12h'}
+						<span class="align-top text-[0.3em] font-normal opacity-60">{previewFmt.ampm}</span>
+					{/if}
+				</div>
 			</div>
 		</div>
-	{/if}
-
-	<span class="mt-1 mb-2 block text-xs text-white/60">{m.font()}</span>
-	<select
-		bind:value={prefs.fontFamily}
-		class="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs text-white/80 transition-colors outline-none focus:border-white/40"
-	>
-		{#each commonFonts as font (font)}
-			<option value={font} class="text-gray-900">{font}</option>
-		{/each}
-	</select>
+	</div>
 </section>

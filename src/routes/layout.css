@@ -1,5 +1,22 @@
 @import 'tailwindcss';
 
+@theme {
+	/*
+	 * Fallback palette only: the settings dialog overrides every one of these
+	 * with `panelThemeVars()` so the chrome follows the clock's own colours.
+	 * These values are what panelThemeVars() derives for the default theme.
+	 */
+	--color-surface-backdrop: #061707;
+	--color-surface-card: #0a2a0d;
+	--color-surface-raised: #1f3d22;
+	--color-surface-line: #355037;
+	--color-accent: #497a49;
+	--color-accent-fg: #e0e9e0;
+	--color-ink: #e0e9e0;
+	--color-ink-muted: #99b499;
+	--color-ink-faint: #668f66;
+}
+
 html,
 body {
 	margin: 0;
@@ -17,31 +34,67 @@ input[type='range'] {
 	cursor: pointer;
 }
 
+input[type='range']::-webkit-slider-runnable-track {
+	height: 6px;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--color-ink) 16%, transparent);
+}
+
+input[type='range']::-moz-range-track {
+	height: 6px;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--color-ink) 16%, transparent);
+}
+
 input[type='range']::-webkit-slider-thumb {
 	-webkit-appearance: none;
 	appearance: none;
-	width: 16px;
-	height: 16px;
+	width: 14px;
+	height: 14px;
 	border-radius: 50%;
-	background: #3b82f6;
-	border: 2px solid #fff;
+	background: var(--color-accent);
+	border: 2px solid var(--color-surface-card);
+	margin-top: -4px;
 	cursor: pointer;
 }
 
 input[type='range']::-moz-range-thumb {
-	width: 16px;
-	height: 16px;
+	width: 14px;
+	height: 14px;
 	border-radius: 50%;
-	background: #3b82f6;
-	border: 2px solid #fff;
+	background: var(--color-accent);
+	border: 2px solid var(--color-surface-card);
 	cursor: pointer;
+}
+
+/* Settings panel scroll area — keep the scrollbar on the green scale */
+.settings-scroll {
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--color-ink) 22%, transparent) transparent;
+}
+
+.settings-scroll::-webkit-scrollbar {
+	width: 8px;
+}
+
+.settings-scroll::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.settings-scroll::-webkit-scrollbar-thumb {
+	background: color-mix(in srgb, var(--color-ink) 22%, transparent);
+	border-radius: 999px;
+}
+
+.settings-scroll::-webkit-scrollbar-thumb:hover {
+	background: color-mix(in srgb, var(--color-ink) 34%, transparent);
 }
 
 input[type='color'] {
 	-webkit-appearance: none;
 	appearance: none;
-	width: 40px;
-	height: 30px;
+	width: 32px;
+	height: 26px;
 	border: none;
 	padding: 0;
 	cursor: pointer;
@@ -53,11 +106,11 @@ input[type='color']::-webkit-color-swatch-wrapper {
 }
 
 input[type='color']::-webkit-color-swatch {
-	border: 1px solid #555;
+	border: 1px solid var(--color-surface-line);
 	border-radius: 4px;
 }
 
 input[type='color']::-moz-color-swatch {
-	border: 1px solid #555;
+	border: 1px solid var(--color-surface-line);
 	border-radius: 4px;
 }

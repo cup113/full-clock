@@ -3,11 +3,17 @@
 	import { VERSION } from '$lib/version';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
-	import { panelBg, activeStyle } from '../color-utils';
+	import { panelThemeVars } from '../color-utils';
+	import { slide } from 'svelte/transition';
 	import ColorConfig from './ColorConfig.svelte';
+	import Icon from './Icon.svelte';
+	import SegmentedControl from './SegmentedControl.svelte';
 	import SyncSection from './SyncSection.svelte';
 
 	let { open, onClose }: { open: boolean; onClose: () => void } = $props();
+
+	/** Re-skins every `--color-*` token the panel uses, so the chrome follows the clock theme. */
+	const themeVars = $derived(panelThemeVars(prefs.background, prefs.foreground));
 
 	function handleLangChange(lang: 'en' | 'zh') {
 		prefs.locale = lang;
@@ -21,37 +27,107 @@
 		}
 	}
 
-	const bg = $derived(panelBg(prefs.background));
+	const timeFormatOptions = [
+		{
+			value: '12h' as const,
+			label: () => m.timeFormat_12h(),
+			attrs: { 'data-umami-event': 'set-timeformat-12h' },
+		},
+		{
+			value: '24h' as const,
+			label: () => m.timeFormat_24h(),
+			attrs: { 'data-umami-event': 'set-timeformat-24h' },
+		},
+	];
+
+	const secondStyleOptions = [
+		{
+			value: 'bar' as const,
+			label: () => m.secondStyle_bar(),
+			attrs: { 'data-umami-event': 'set-secondstyle-bar' },
+		},
+		{
+			value: 'digital' as const,
+			label: () => m.secondStyle_digital(),
+			attrs: { 'data-umami-event': 'set-secondstyle-digital' },
+		},
+		{
+			value: 'off' as const,
+			label: () => m.secondStyle_off(),
+			attrs: { 'data-umami-event': 'set-secondstyle-off' },
+		},
+	];
+
+	const barPositionOptions = [
+		{
+			value: 'fullscreen' as const,
+			label: () => m.barPosition_fullscreen(),
+			attrs: { 'data-umami-event': 'set-barposition-fullscreen' },
+		},
+		{
+			value: 'top' as const,
+			label: () => m.barPosition_top(),
+			attrs: { 'data-umami-event': 'set-barposition-top' },
+		},
+		{
+			value: 'bottom' as const,
+			label: () => m.barPosition_bottom(),
+			attrs: { 'data-umami-event': 'set-barposition-bottom' },
+		},
+	];
+
+	const titleStyleOptions = [
+		{
+			value: 'date' as const,
+			label: () => m.titleStyle_date(),
+			attrs: { 'data-umami-event': 'set-titlestyle-date' },
+		},
+		{
+			value: 'custom' as const,
+			label: () => m.titleStyle_custom(),
+			attrs: { 'data-umami-event': 'set-titlestyle-custom' },
+		},
+		{
+			value: 'off' as const,
+			label: () => m.titleStyle_off(),
+			attrs: { 'data-umami-event': 'set-titlestyle-off' },
+		},
+	];
+
+	const langOptions = [
+		{ value: 'en' as const, label: () => 'English', attrs: { 'data-umami-event': 'set-lang-en' } },
+		{ value: 'zh' as const, label: () => '中文', attrs: { 'data-umami-event': 'set-lang-zh' } },
+	];
 </script>
 
 {#if open}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+		style={themeVars}
 		onclick={onClose}
 		onkeydown={(e) => e.key === 'Escape' && onClose()}
 		role="dialog"
 		tabindex="-1"
 	>
 		<div
-			class="flex max-h-[85vh] w-[90%] max-w-lg flex-col overflow-hidden rounded-xl shadow-2xl"
+			class="flex max-h-[85vh] w-[90%] max-w-lg flex-col overflow-hidden rounded-xl border border-surface-line bg-surface-backdrop shadow-2xl"
 			style="font-family: system-ui, sans-serif"
 			onclick={(e) => e.stopPropagation()}
 			role="presentation"
 		>
 			<div
-				class="flex shrink-0 items-center justify-between border-b border-white/10 px-5 py-4"
-				style="background: {bg}"
+				class="flex shrink-0 items-center justify-between border-b border-surface-line px-5 py-4"
 			>
-				<h2 class="m-0 text-lg font-semibold text-gray-200">{m.settings()}</h2>
+				<h2 class="m-0 text-base font-semibold text-ink">{m.settings()}</h2>
 				<button
-					class="cursor-pointer rounded border-none bg-transparent p-1 text-gray-400 transition-colors hover:text-white"
+					class="cursor-pointer rounded-md border-none bg-transparent p-1 text-ink-muted transition-colors hover:text-ink"
 					onclick={onClose}
 					aria-label={m.close()}
 				>
 					<svg
 						viewBox="0 0 24 24"
-						width="20"
-						height="20"
+						width="18"
+						height="18"
 						fill="none"
 						stroke="currentColor"
 						stroke-width="2"
@@ -63,172 +139,103 @@
 				</button>
 			</div>
 
-			<div class="flex-1 space-y-4 overflow-y-auto px-5 py-4" style="background: {bg}">
+			<div class="settings-scroll flex-1 space-y-3 overflow-y-auto px-4 py-4">
 				<!-- FORMAT -->
-				<section class="rounded-xl px-4 py-4" style="background: {bg}">
-					<h3 class="mb-4 text-[11px] font-bold tracking-wider text-white/40 uppercase">
-						{m.format()}
-					</h3>
-
-					<div class="mb-3 flex flex-wrap items-center justify-between gap-y-2">
-						<span class="shrink-0 text-xs text-white/60">{m.timeFormat()}</span>
-						<div
-							class="inline-flex divide-x divide-white/15 overflow-hidden rounded-lg border border-white/15"
-						>
-							<button
-								class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-									(prefs.timeFormat === '12h' ? '' : ' bg-transparent text-white/50')}
-								style={prefs.timeFormat === '12h'
-									? activeStyle(prefs.foreground, prefs.background)
-									: ''}
-								onclick={() => (prefs.timeFormat = '12h')}
-								data-umami-event="set-timeformat-12h">{m.timeFormat_12h()}</button
-							>
-							<button
-								class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-									(prefs.timeFormat === '24h' ? '' : ' bg-transparent text-white/50')}
-								style={prefs.timeFormat === '24h'
-									? activeStyle(prefs.foreground, prefs.background)
-									: ''}
-								onclick={() => (prefs.timeFormat = '24h')}
-								data-umami-event="set-timeformat-24h">{m.timeFormat_24h()}</button
-							>
-						</div>
-					</div>
-
-					<div class="flex flex-wrap items-center justify-between gap-y-2">
-						<span class="shrink-0 text-xs text-white/60">{m.showSeconds()}</span>
-						<div
-							class="inline-flex divide-x divide-white/15 overflow-hidden rounded-lg border border-white/15"
-						>
-							<button
-								class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-									(prefs.secondStyle === 'bar' ? '' : ' bg-transparent text-white/50')}
-								style={prefs.secondStyle === 'bar'
-									? activeStyle(prefs.foreground, prefs.background)
-									: ''}
-								onclick={() => (prefs.secondStyle = 'bar')}
-								data-umami-event="set-secondstyle-bar">{m.secondStyle_bar()}</button
-							>
-							<button
-								class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-									(prefs.secondStyle === 'digital' ? '' : ' bg-transparent text-white/50')}
-								style={prefs.secondStyle === 'digital'
-									? activeStyle(prefs.foreground, prefs.background)
-									: ''}
-								onclick={() => (prefs.secondStyle = 'digital')}
-								data-umami-event="set-secondstyle-digital">{m.secondStyle_digital()}</button
-							>
-							<button
-								class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-									(prefs.secondStyle === 'off' ? '' : ' bg-transparent text-white/50')}
-								style={prefs.secondStyle === 'off'
-									? activeStyle(prefs.foreground, prefs.background)
-									: ''}
-								onclick={() => (prefs.secondStyle = 'off')}
-								data-umami-event="set-secondstyle-off">{m.secondStyle_off()}</button
-							>
-						</div>
-					</div>
-
-					{#if prefs.secondStyle === 'bar'}
-						<div class="mt-3 flex flex-col gap-2">
-							<div class="flex items-center gap-2">
-								<span class="shrink-0 text-[11px] text-white/50">{m.barPosition()}</span>
-								<div
-									class="inline-flex divide-x divide-white/15 overflow-hidden rounded-md border border-white/15"
-								>
-									<button
-										class={'px-2 py-0.5 text-[11px] font-medium transition-all duration-150' +
-											(prefs.barPosition === 'fullscreen' ? '' : ' bg-transparent text-white/50')}
-										style={prefs.barPosition === 'fullscreen'
-											? activeStyle(prefs.foreground, prefs.background)
-											: ''}
-										onclick={() => (prefs.barPosition = 'fullscreen')}
-										data-umami-event="set-barposition-fullscreen"
-										>{m.barPosition_fullscreen()}</button
-									>
-									<button
-										class={'px-2 py-0.5 text-[11px] font-medium transition-all duration-150' +
-											(prefs.barPosition === 'top' ? '' : ' bg-transparent text-white/50')}
-										style={prefs.barPosition === 'top'
-											? activeStyle(prefs.foreground, prefs.background)
-											: ''}
-										onclick={() => (prefs.barPosition = 'top')}
-										data-umami-event="set-barposition-top">{m.barPosition_top()}</button
-									>
-									<button
-										class={'px-2 py-0.5 text-[11px] font-medium transition-all duration-150' +
-											(prefs.barPosition === 'bottom' ? '' : ' bg-transparent text-white/50')}
-										style={prefs.barPosition === 'bottom'
-											? activeStyle(prefs.foreground, prefs.background)
-											: ''}
-										onclick={() => (prefs.barPosition = 'bottom')}
-										data-umami-event="set-barposition-bottom">{m.barPosition_bottom()}</button
-									>
-								</div>
-							</div>
-							<div class="flex items-center gap-2">
-								<span class="shrink-0 text-[11px] text-white/50">{m.progressOpacity()}</span>
-								<input
-									type="range"
-									min="0"
-									max="100"
-									bind:value={prefs.progressOpacity}
-									class="w-20 cursor-pointer appearance-none accent-blue-500"
-								/>
-								<span class="w-6 text-right text-[11px] text-white/60 tabular-nums"
-									>{prefs.progressOpacity}%</span
-								>
-							</div>
-						</div>
-					{/if}
-
-					<div class="mt-3 flex flex-wrap items-center justify-between gap-y-2">
-						<span class="shrink-0 text-xs text-white/60">{m.titleBar()}</span>
-						<div
-							class="inline-flex divide-x divide-white/15 overflow-hidden rounded-lg border border-white/15"
-						>
-							<button
-								class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-									(prefs.titleStyle === 'date' ? '' : ' bg-transparent text-white/50')}
-								style={prefs.titleStyle === 'date'
-									? activeStyle(prefs.foreground, prefs.background)
-									: ''}
-								onclick={() => (prefs.titleStyle = 'date')}
-								data-umami-event="set-titlestyle-date">{m.titleStyle_date()}</button
-							>
-							<button
-								class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-									(prefs.titleStyle === 'custom' ? '' : ' bg-transparent text-white/50')}
-								style={prefs.titleStyle === 'custom'
-									? activeStyle(prefs.foreground, prefs.background)
-									: ''}
-								onclick={() => (prefs.titleStyle = 'custom')}
-								data-umami-event="set-titlestyle-custom">{m.titleStyle_custom()}</button
-							>
-							<button
-								class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-									(prefs.titleStyle === 'off' ? '' : ' bg-transparent text-white/50')}
-								style={prefs.titleStyle === 'off'
-									? activeStyle(prefs.foreground, prefs.background)
-									: ''}
-								onclick={() => (prefs.titleStyle = 'off')}
-								data-umami-event="set-titlestyle-off">{m.titleStyle_off()}</button
-							>
-						</div>
-					</div>
-					{#if prefs.titleStyle === 'custom'}
-						<div class="mt-2">
-							<input
-								type="text"
-								bind:value={prefs.titleCustomized}
-								placeholder={m.titleCustomized()}
-								class="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs text-white/80 transition-colors outline-none focus:border-white/40"
-								data-umami-event="edit-title-custom"
+				<section class="overflow-hidden rounded-xl border border-surface-line bg-surface-card">
+					<div class="divide-y divide-surface-line">
+						<div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+							<span class="flex items-center gap-2 text-sm text-ink">
+								<Icon name="clock" />
+								{m.timeFormat()}
+							</span>
+							<SegmentedControl
+								options={timeFormatOptions}
+								value={prefs.timeFormat}
+								onchange={(v) => (prefs.timeFormat = v)}
 							/>
 						</div>
-					{/if}
+
+						<div>
+							<div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+								<span class="flex items-center gap-2 text-sm text-ink">
+									<Icon name="timer" />
+									{m.showSeconds()}
+								</span>
+								<SegmentedControl
+									options={secondStyleOptions}
+									value={prefs.secondStyle}
+									onchange={(v) => (prefs.secondStyle = v)}
+								/>
+							</div>
+
+							{#if prefs.secondStyle === 'bar'}
+								<div class="px-4 pb-3" transition:slide={{ duration: 200 }}>
+									<div class="ml-2 space-y-2.5 border-l-2 border-accent/60 pl-3">
+										<div class="flex flex-wrap items-center justify-between gap-3">
+											<span class="flex items-center gap-2 text-sm text-ink">
+												<Icon name="bar-position" />
+												{m.barPosition()}
+											</span>
+											<SegmentedControl
+												options={barPositionOptions}
+												value={prefs.barPosition}
+												onchange={(v) => (prefs.barPosition = v)}
+											/>
+										</div>
+
+										<div class="flex flex-wrap items-center justify-between gap-3">
+											<span class="flex items-center gap-2 text-sm text-ink">
+												<Icon name="opacity" />
+												{m.progressOpacity()}
+											</span>
+											<span class="flex items-center gap-2">
+												<input
+													type="range"
+													min="0"
+													max="100"
+													bind:value={prefs.progressOpacity}
+													class="w-28 cursor-pointer"
+													aria-label={m.progressOpacity()}
+												/>
+												<span class="w-10 text-right text-sm text-ink-muted tabular-nums"
+													>{prefs.progressOpacity}%</span
+												>
+											</span>
+										</div>
+									</div>
+								</div>
+							{/if}
+						</div>
+
+						<div>
+							<div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+								<span class="flex items-center gap-2 text-sm text-ink">
+									<Icon name="panel-top" />
+									{m.titleBar()}
+								</span>
+								<SegmentedControl
+									options={titleStyleOptions}
+									value={prefs.titleStyle}
+									onchange={(v) => (prefs.titleStyle = v)}
+								/>
+							</div>
+
+							{#if prefs.titleStyle === 'custom'}
+								<div class="px-4 pb-3" transition:slide={{ duration: 200 }}>
+									<label class="flex items-center gap-2">
+										<Icon name="pencil" />
+										<input
+											type="text"
+											bind:value={prefs.titleCustomized}
+											placeholder={m.titleCustomized()}
+											class="w-full rounded-lg border border-surface-line bg-surface-raised px-3 py-1.5 text-sm text-ink transition-colors outline-none placeholder:text-ink-faint focus:border-accent"
+											data-umami-event="edit-title-custom"
+										/>
+									</label>
+								</div>
+							{/if}
+						</div>
+					</div>
 				</section>
 
 				<ColorConfig />
@@ -236,43 +243,26 @@
 				<SyncSection />
 
 				<!-- LANGUAGE -->
-				<section class="rounded-xl px-4 py-4" style="background: {bg}">
-					<h3 class="mb-4 text-[11px] font-bold tracking-wider text-white/40 uppercase">
+				<section
+					class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-surface-line bg-surface-card px-4 py-3"
+				>
+					<span class="flex items-center gap-2 text-sm text-ink">
+						<Icon name="globe" />
 						{m.language()}
-					</h3>
-					<div
-						class="inline-flex divide-x divide-white/15 overflow-hidden rounded-lg border border-white/15"
-					>
-						<button
-							class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-								(getLocale() === 'en' ? '' : ' bg-transparent text-white/50')}
-							style={getLocale() === 'en' ? activeStyle(prefs.foreground, prefs.background) : ''}
-							onclick={() => handleLangChange('en')}
-							data-umami-event="set-lang-en">English</button
-						>
-						<button
-							class={'px-3 py-1 text-xs font-medium transition-all duration-150' +
-								(getLocale() === 'zh' ? '' : ' bg-transparent text-white/50')}
-							style={getLocale() === 'zh' ? activeStyle(prefs.foreground, prefs.background) : ''}
-							onclick={() => handleLangChange('zh')}
-							data-umami-event="set-lang-zh">中文</button
-						>
-					</div>
+					</span>
+					<SegmentedControl options={langOptions} value={getLocale()} onchange={handleLangChange} />
 				</section>
 			</div>
 
-			<div
-				class="flex shrink-0 items-center border-t border-white/10 px-5 py-3"
-				style="background: {bg}; font-family: system-ui, sans-serif"
-			>
+			<div class="flex shrink-0 items-center gap-3 border-t border-surface-line px-4 py-3">
 				<button
-					class="cursor-pointer rounded-lg border border-red-500/40 bg-transparent px-5 py-2 text-xs text-red-400 transition-colors hover:bg-red-500/10"
+					class="cursor-pointer rounded-lg border border-red-500/40 bg-transparent px-4 py-2 text-xs text-red-400 transition-colors hover:bg-red-500/10"
 					onclick={handleReset}
 					data-umami-event="reset-settings">{m.reset()}</button
 				>
-				<span class="flex-1 text-center text-[10px] text-white/30">v{VERSION}</span>
+				<span class="flex-1 text-center text-[10px] text-ink-faint">v{VERSION}</span>
 				<button
-					class="cursor-pointer rounded-lg border-none bg-blue-600 px-5 py-2 text-xs text-gray-200 transition-colors hover:bg-blue-700"
+					class="cursor-pointer rounded-lg border border-accent/50 bg-accent/25 px-4 py-2 text-xs text-ink transition-colors hover:bg-accent/40"
 					onclick={onClose}
 					data-umami-event="close-settings">{m.close()}</button
 				>
@@ -280,27 +270,3 @@
 		</div>
 	</div>
 {/if}
-
-<style>
-	input[type='range']::-webkit-slider-runnable-track {
-		height: 6px;
-		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.15);
-	}
-	input[type='range']::-moz-range-track {
-		height: 6px;
-		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.15);
-	}
-	input[type='range']::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		appearance: none;
-		width: 14px;
-		height: 14px;
-		border-radius: 999px;
-		background: #3b82f6;
-		border: 2px solid #1a1a2e;
-		margin-top: -4px;
-		cursor: pointer;
-	}
-</style>

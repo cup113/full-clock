@@ -22,6 +22,7 @@ test('persists time format 12h across reload', async ({ page }) => {
 test('persists background color change across reload', async ({ page }) => {
 	await page.locator('[data-umami-event="open-settings"]').click();
 
+	await page.locator('[data-umami-event="toggle-color-detail"]').click();
 	await page
 		.locator('[data-umami-event="apply-color-preset"][data-umami-event-preset="midnight"]')
 		.click();

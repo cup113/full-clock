@@ -8,13 +8,9 @@ beforeEach(() => {
 });
 
 describe('ColorConfig', () => {
-	it('renders theme section header', () => {
+	it('renders all 6 color preset buttons', async () => {
 		render(ColorConfig);
-		expect(screen.getByText('theme')).toBeInTheDocument();
-	});
-
-	it('renders all 6 color preset buttons', () => {
-		render(ColorConfig);
+		fireEvent.click(screen.getByRole('button', { name: 'colors' }));
 		const titles = [
 			'colorPresetClassic',
 			'colorPresetMidnight',
@@ -24,13 +20,14 @@ describe('ColorConfig', () => {
 			'colorPresetSlate',
 		];
 		for (const t of titles) {
-			expect(screen.getByTitle(t)).toBeInTheDocument();
+			expect(await screen.findByTitle(t)).toBeInTheDocument();
 		}
 	});
 
-	it('clicking classic preset updates all three color prefs', () => {
+	it('clicking classic preset updates all three color prefs', async () => {
 		render(ColorConfig);
-		fireEvent.click(screen.getByTitle('colorPresetClassic'));
+		fireEvent.click(screen.getByRole('button', { name: 'colors' }));
+		fireEvent.click(await screen.findByTitle('colorPresetClassic'));
 		expect(prefs.background).toBe('#004400');
 		expect(prefs.foreground).toBe('#FFFFFF');
 		expect(prefs.colorProgress).toBe('#005500');
@@ -42,17 +39,16 @@ describe('ColorConfig', () => {
 	});
 
 	it('clicking detail toggle expands color pickers', async () => {
-		const { container } = render(ColorConfig);
-		const toggleBtn = container.querySelector('section > button')!;
-		fireEvent.click(toggleBtn);
+		render(ColorConfig);
+		fireEvent.click(screen.getByRole('button', { name: 'colors' }));
 		await vi.waitFor(() => {
 			expect(screen.getByText('#004400')).toBeInTheDocument();
 		});
 	});
 
 	it('clicking detail toggle again collapses color pickers', async () => {
-		const { container } = render(ColorConfig);
-		const toggleBtn = container.querySelector('section > button')!;
+		render(ColorConfig);
+		const toggleBtn = screen.getByRole('button', { name: 'colors' });
 		fireEvent.click(toggleBtn);
 		await vi.waitFor(() => {
 			expect(screen.getByText('#004400')).toBeInTheDocument();
@@ -67,9 +63,8 @@ describe('ColorConfig', () => {
 		prefs.background = '#ff0000';
 		prefs.foreground = '#00ff00';
 		prefs.colorProgress = '#0000ff';
-		const { container } = render(ColorConfig);
-		const toggleBtn = container.querySelector('section > button')!;
-		fireEvent.click(toggleBtn);
+		render(ColorConfig);
+		fireEvent.click(screen.getByRole('button', { name: 'colors' }));
 		await vi.waitFor(() => {
 			expect(screen.getByText('#ff0000')).toBeInTheDocument();
 		});
