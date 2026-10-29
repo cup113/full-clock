@@ -31,3 +31,7 @@ vite.config.ts.timestamp-*
 # Playwright
 /test-results/
 /playwright-report/
+
+# Tauri
+/src-tauri/target/
+/src-tauri/gen/schemas/

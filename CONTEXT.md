@@ -61,6 +61,7 @@ _Avoid_: 屏幕常量 (typo for 屏幕常亮), always-on display
 
 - **secondStyle**=`bar` paired with **barPosition** determines where the progress bar renders (fullscreen, top, or bottom)
 - **syncStatus** is driven by **syncManager**, which fires parallel requests with 1.5s timeout and combines results via inverse-variance weighted average
+- the provider set depends on the runtime: the web build always queries the three HTTP APIs, while the desktop build appends four NTP providers (`ntp_query` over UDP 123, measured in Rust). **offset** and **errorMargin** keep their meaning either way
 - **wakeLock** is bound to `prefs.keepScreenOn`; enabling/disabling transitions the state
 - **wakeLockBadge** reflects **wakeLock**, never `keepScreenOn` alone: the two diverge while a request is pending and when the lock was dropped
 - the browser releases the **wakeLock** whenever the document is hidden, so it is re-acquired on return; without that, the preference stays on while the lock is silently gone

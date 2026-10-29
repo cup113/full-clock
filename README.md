@@ -47,6 +47,23 @@ Modal dialog with the following categories / 模态弹窗，包含以下设置�
 3. Click the **Fullscreen** button at the top-right to toggle full-screen mode. / 点击右上角"全屏"按钮，可以切换全屏显示。
 4. Switch between Chinese and English interfaces. / 支持切换中/英文界面。
 
+## Desktop App / 桌面版
+
+The same static build is packaged as a Windows desktop app with [Tauri v2](https://v2.tauri.app/), for machines where installing a PWA is not an option — and because only the native shell can reach a real NTP server (UDP 123).
+
+同一份静态构建通过 [Tauri v2](https://v2.tauri.app/) 打包为 Windows 桌面应用，适合无法安装 PWA 的机器；也只有原生壳能直连 NTP（UDP 123）校准时钟。
+
+- **Two artifacts / 两种产物** — `Full Clock_<version>_x64-setup.exe` (NSIS installer, bootstraps WebView2 if missing) and `FullClock_<version>_x64-portable.zip` (unzip and run) / NSIS 安装包（缺 WebView2 时可自动补装）与便携版（解压即用）
+- **Windows 10/11** — the portable build relies on the system WebView2 runtime / 便携版依赖系统自带 WebView2 运行时
+- **Offline first / 离线可用** — assets are embedded in the executable; no network needed to show the clock / 资源内嵌在可执行文件里，断网照常走
+- **NTP time sync / NTP 校时** — the desktop build adds `ntp.aliyun.com`, `ntp.tencent.com`, `time.windows.com` and `pool.ntp.org` to the provider set; if UDP is blocked it falls back to the HTTP APIs automatically / 桌面版在时间源中增加四个 NTP 服务器，UDP 被拦时自动回落到 HTTP 时间源
+- **No analytics / 无上报** — the desktop CSP blocks the umami script, and only the three time APIs are reachable / 桌面端 CSP 阻断 umami，仅放行三个时间 API
+- **Unsigned / 未签名** — expect a SmartScreen warning on first launch / 首次运行会有 SmartScreen 提示
+
+Desktop releases are built by `.github/workflows/desktop-release.yml` on every `v*` tag and attached to the GitHub Release.
+
+桌面版由 `.github/workflows/desktop-release.yml` 在推 `v*` tag 时构建，并挂到 GitHub Release。
+
 ## Features / 特性
 
 - **Auto-size clock** / **大屏显示时间** — automatically adapts to window size / 自动适配窗口尺寸
@@ -61,4 +78,5 @@ Modal dialog with the following categories / 模态弹窗，包含以下设置�
 - **Time sync** / **时间同步** — auto-calibrates system clock offset (auto-applied when error <500ms) / 自动校准系统时钟偏差，误差 <500ms 自动应用
 - **Internationalization** / **国际化** — 中文 / English
 - **PWA support** / **PWA 支持** — offline access, installable / 离线访问、可安装
+- **Desktop app** / **桌面版** — Windows Tauri shell, offline, NTP time sync / Windows Tauri 桌面壳，离线可用，支持 NTP 校时
 - **Cross-platform** / **跨平台**

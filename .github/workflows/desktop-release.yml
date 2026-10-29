@@ -1,0 +1,65 @@
+name: Desktop release
+
+# Builds the Windows desktop shell and publishes both artifacts on a `v*` tag.
+# A manual run only uploads workflow artifacts, so the pipeline can be tested
+# without publishing a release.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4 # reads packageManager from package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm tauri build
+
+      # The zip name must not be built from `github.ref_name`: a branch name may
+      # contain `/` (e.g. `feat/tauri-desktop`) and Compress-Archive does not
+      # create the directory it would imply. The app version keeps the name in
+      # step with the NSIS installer and with the name promised in README.
+      - name: Name the portable artifact
+        id: portable
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          "zip=FullClock_${version}_x64-portable.zip" >> $env:GITHUB_OUTPUT
+
+      - name: Package portable build
+        shell: pwsh
+        env:
+          PORTABLE_ZIP: ${{ steps.portable.outputs.zip }}
+        run: |
+          Compress-Archive -Path src-tauri/target/release/full-clock.exe `
+            -DestinationPath $env:PORTABLE_ZIP
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-windows
+          if-no-files-found: error
+          path: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            ${{ steps.portable.outputs.zip }}
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            ${{ steps.portable.outputs.zip }}
